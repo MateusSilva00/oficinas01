@@ -1,5 +1,6 @@
-import requests
 import json
+
+import httpx
 
 URL = "https://bolls.life/get-random-verse/NVT"
 
@@ -21,7 +22,7 @@ def format_user_response(data: dict) -> str:
 
 
 def get_bible_quote():
-    response = requests.get(URL)
+    response = httpx.get(URL)
 
     assert response.status_code == 200
 

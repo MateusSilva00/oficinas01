@@ -1,4 +1,4 @@
-import requests
+import httpx
 import pandas as pd
 
 URL = "https://real-time-finance-data.p.rapidapi.com/market-trends"
@@ -14,7 +14,7 @@ def get_b3_trends(is_winner=True):
     trend_type = "GAINERS" if is_winner else "LOSERS"
     querystring = {"trend_type": trend_type, "country": "br", "language": "pt"}
 
-    response = requests.get(URL, headers=headers, params=querystring)
+    response = httpx.get(URL, headers=headers, params=querystring)
 
     assert response.status_code == 200
 
