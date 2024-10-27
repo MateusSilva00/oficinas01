@@ -22,7 +22,7 @@ def format_user_response(data: dict) -> str:
 
 
 def get_bible_quote():
-    response = httpx.get(URL)
+    response = httpx.get(URL, follow_redirects=True)
 
     assert response.status_code == 200
 

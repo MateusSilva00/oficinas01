@@ -1,9 +1,14 @@
+import os
+
 import httpx
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 URL = "https://real-time-finance-data.p.rapidapi.com/market-trends"
 headers = {
-    "x-rapidapi-key": "0a9281447bmsh050ae130452ed49p1bc1cdjsn28d1e7d60a18",
+    "x-rapidapi-key": os.environ["B3_RAPID_API_KEY"],
     "x-rapidapi-host": "real-time-finance-data.p.rapidapi.com",
 }
 
@@ -14,7 +19,9 @@ def get_b3_trends(is_winner=True):
     trend_type = "GAINERS" if is_winner else "LOSERS"
     querystring = {"trend_type": trend_type, "country": "br", "language": "pt"}
 
-    response = httpx.get(URL, headers=headers, params=querystring)
+    response = httpx.get(
+        URL, headers=headers, params=querystring, follow_redirects=True
+    )
 
     assert response.status_code == 200
 
