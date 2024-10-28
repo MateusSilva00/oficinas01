@@ -38,10 +38,10 @@ def init_db():
                         (
                             "testuser1",
                             True,
-                            False,
                             True,
-                            False,
-                        ),  # Usuário 1 com B3 e News
+                            True,
+                            True,
+                        ),  # Usuário 1 com tudo
                         (
                             "testuser2",
                             False,

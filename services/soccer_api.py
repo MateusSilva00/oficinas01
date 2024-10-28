@@ -1,6 +1,6 @@
 from datetime import date
 
-import httpx
+from httpx import AsyncClient
 
 TODAY = date.today().strftime("%d-%m-%Y")
 
@@ -32,17 +32,13 @@ def format_user_response(data: dict) -> list[dict]:
     return formmated_games
 
 
-def get_soccer_games() -> list[dict]:
-    response = httpx.get(
+async def get_soccer_games(client: AsyncClient) -> list[dict]:
+    response = await client.get(
         f"https://www.cnnbrasil.com.br/wp-json/cnnbr/sports/soccer/v1/matches/date/{TODAY}",
     )
 
     data = response.json()
 
-    games = format_user_response(data)
+    games = format_user_response(data)[:5]
 
     return games
-
-
-if __name__ == "__main__":
-    print(get_soccer_games())

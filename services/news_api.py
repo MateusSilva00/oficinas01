@@ -1,8 +1,8 @@
 # https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=087431a2a56b4d139f77b7af24a587bc
 import os
 
-import httpx
 from dotenv import load_dotenv
+from httpx import AsyncClient
 
 load_dotenv(override=True)
 
@@ -20,10 +20,10 @@ def format_user_response(data: dict):
     return formatted_news
 
 
-def get_news() -> dict:
+async def get_news(client: AsyncClient) -> dict:
     querystring = {"country": "us", "category": "science"}
 
-    response = httpx.get(
+    response = await client.get(
         "https://newsapi.org/v2/top-headlines",
         headers={"X-Api-Key": os.environ["NEWS_API"]},
         params=querystring,

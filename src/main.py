@@ -20,7 +20,7 @@ user_service = UserService()
 
 @app.get("/users/{user_id}")
 async def get_user(user_id: int):
-    user = user_service.get_user_services(user_id)
+    user = await user_service.get_user_services(user_id)
 
     if not user:
         raise HTTPException(status_code=404, detail=f"User with id {user_id} not found")

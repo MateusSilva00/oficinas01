@@ -1,6 +1,6 @@
 import json
 
-import httpx
+from httpx import AsyncClient
 
 URL = "https://bolls.life/get-random-verse/NVT"
 
@@ -22,8 +22,8 @@ def format_user_response(data: dict) -> str:
     )
 
 
-def get_bible_quote():
-    response = httpx.get(URL, follow_redirects=True)
+async def get_bible_quote(client: AsyncClient):
+    response = await client.get(URL, follow_redirects=True)
 
     assert response.status_code == 200
 

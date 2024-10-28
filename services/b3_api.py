@@ -1,8 +1,8 @@
 import os
 
-import httpx
 import pandas as pd
 from dotenv import load_dotenv
+from httpx import AsyncClient
 
 load_dotenv(override=True)
 
@@ -15,11 +15,11 @@ headers = {
 USECOLS = ["symbol", "name", "price", "change", "change_percent", "previous_close"]
 
 
-def get_b3_trends(is_winner=True):
+async def get_b3_trends(client: AsyncClient, is_winner=True):
     trend_type = "GAINERS" if is_winner else "LOSERS"
     querystring = {"trend_type": trend_type, "country": "br", "language": "pt"}
 
-    response = httpx.get(
+    response = await client.get(
         URL, headers=headers, params=querystring, follow_redirects=True
     )
 
@@ -27,8 +27,11 @@ def get_b3_trends(is_winner=True):
 
     data = response.json()["data"]["trends"]
 
-    dataframe = pd.DataFrame(data)
-    dataframe = dataframe[dataframe["type"] == "stock"]
+    try:
+        dataframe = pd.DataFrame(data)
+        dataframe = dataframe[dataframe["type"] == "stock"]
+    except:
+        return
 
     dataframe.sort_values(by="change_percent", ascending=False, inplace=True)
     dataframe = dataframe[USECOLS]
