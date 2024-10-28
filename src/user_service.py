@@ -1,6 +1,6 @@
 import httpx
 
-from services.b3_api import get_b3_trends
+from services.b3_api import get_market_trends
 from services.bible_api import get_bible_quote
 from services.news_api import get_news
 from services.soccer_api import get_soccer_games
@@ -24,7 +24,7 @@ class UserService:
                 "username": user["username"],
                 "services": {
                     "B3": (
-                        await get_b3_trends(client, is_winner=True)
+                        await get_market_trends(client, is_winner=True)
                         if user["b3"]
                         else None
                     ),
