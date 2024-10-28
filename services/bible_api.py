@@ -17,7 +17,8 @@ def format_user_response(data: dict) -> str:
             + data["text"]
         )
         .replace("\n", " ")
-        .replace("<br>", " ")
+        .replace("<br>", "")
+        .strip()
     )
 
 
@@ -29,7 +30,7 @@ def get_bible_quote():
     data = response.json()
 
     book = str(data["book"])
-    bible_order = json.load(open("bible_order.json"))
+    bible_order = json.load(open("services/bible_order.json"))
 
     del data["pk"]
     del data["translation"]
