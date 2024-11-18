@@ -1,3 +1,6 @@
 pandas
 httpx
 python-dotenv
+fastapi
+loguru
+uvicorn

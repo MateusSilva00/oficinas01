@@ -23,7 +23,7 @@ def get_b3_trends(data: dict) -> dict:
     dataframe.sort_values(by="change_percent", ascending=False, inplace=True)
     dataframe = dataframe[USE_B3_COLS]
 
-    top_stocks = dataframe[:10]
+    top_stocks = dataframe[:5]
 
     return top_stocks.to_dict("records")
 
