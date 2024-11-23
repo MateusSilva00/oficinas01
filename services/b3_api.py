@@ -31,7 +31,7 @@ PARAMS = {
     "sector": "Todos",
     "orderAtributte": "High",
     "pageIndex": "1",
-    "pageSize": "5",
+    "pageSize": "15",
     "type": "json",
 }
 
