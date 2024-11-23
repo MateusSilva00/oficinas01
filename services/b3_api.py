@@ -1,19 +1,39 @@
-import os
+from dataclasses import asdict, dataclass
 
 import pandas as pd
 from dotenv import load_dotenv
 from httpx import AsyncClient
 
+
+@dataclass
+class Stock:
+    Date: str
+    ChangeDay: float
+    ChangeDayFormatted: str
+    Change12M: float
+    Change12MFormatted: str
+    StockCode: str
+    StockName: str
+    Value: float
+    ValueFormatted: str
+    Volume: float
+    VolumeFormatted: str
+
+
 load_dotenv(override=True)
 
-URL = "https://real-time-finance-data.p.rapidapi.com/market-trends"
-headers = {
-    "x-rapidapi-key": os.environ["B3_RAPID_API_KEY"],
-    "x-rapidapi-host": "real-time-finance-data.p.rapidapi.com",
-}
+URL = "https://api.infomoney.com.br/markets/high-low/b3"
 
 USE_B3_COLS = ["symbol", "name", "price", "change", "change_percent", "previous_close"]
 USE_CRYPTO_COLS = ["currency", "exchange_rate", "previous_close", "last_update_utc"]
+
+PARAMS = {
+    "sector": "Todos",
+    "orderAtributte": "High",
+    "pageIndex": "1",
+    "pageSize": "5",
+    "type": "json",
+}
 
 
 def get_b3_trends(data: dict) -> dict:
@@ -28,42 +48,34 @@ def get_b3_trends(data: dict) -> dict:
     return top_stocks.to_dict("records")
 
 
-async def get_cripto_trends(client: AsyncClient, trend_type: str = "CRYPTO") -> dict:
-    querystring = {"trend_type": trend_type, "country": "br", "language": "pt"}
-
-    response = await client.get(
-        URL, headers=headers, params=querystring, follow_redirects=True
-    )
-    assert response.status_code == 200
-
-    data = response.json()["data"]["trends"]
-    df = pd.DataFrame(data[:5])
-    df["currency"] = df["from_symbol"] + "/" + df["to_symbol"]
-    df = df[USE_CRYPTO_COLS]
-
-    return df.to_dict("records")
-
-
-async def get_market_trends(client: AsyncClient, is_winner=True) -> dict:
+async def get_market_trends(client: AsyncClient, is_winner=True) -> list[dict]:
     trend_type = "GAINERS" if is_winner else "LOSERS"
-    querystring = {"trend_type": trend_type, "country": "br", "language": "pt"}
 
-    response = await client.get(
-        URL, headers=headers, params=querystring, follow_redirects=True
-    )
+    response = await client.get(URL, follow_redirects=True)
 
     assert response.status_code == 200
 
-    data = response.json()["data"]["trends"]
+    data = response.json()
+    date = data["ReferenceDate"]
 
-    if not len(data):
-        return await get_cripto_trends(client)
+    stocks = []
+    for item in data["Data"]:
+        stocks.append(Stock(**item))
 
-    return get_b3_trends(data)
+    stocks = [asdict(stock) for stock in stocks]
+
+    return stocks
 
 
 if __name__ == "__main__":
-    winners = get_market_trends(is_winner=True)
-    losers = get_market_trends(is_winner=False)
+    import asyncio
 
-    print(winners)
+    import httpx
+
+    client = httpx.AsyncClient()
+
+    async def main():
+        trends = await get_market_trends(client)
+        print(trends)
+
+    asyncio.run(main())
