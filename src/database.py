@@ -36,21 +36,21 @@ def init_db():
                 """,
                     [
                         (
-                            "testuser1",
+                            "Wiu Chakur",
                             True,
                             True,
                             True,
                             True,
                         ),  # Usuário 1 com tudo
                         (
-                            "testuser2",
+                            "Lucas",
                             False,
                             True,
                             True,
                             True,
                         ),  # Usuário 2 com Bible, News e Soccer
                         (
-                            "testuser3",
+                            "Chaves Anarcocapilista",
                             False,
                             False,
                             False,

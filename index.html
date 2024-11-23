@@ -28,14 +28,24 @@
     </div>
   </div>
 
-  <div class="footer">
-    <div class="footer-content">
-       <a href=""><div class="widget visible" id="news">Notícias</div></a>
-       <a href=""><div class="widget visible" id="sports">Esporte</div></a>
-       <a href=""><div class="widget visible" id="stocks">Ações</div> </a>
-       <a href=""><div class="widget visible" id="verse">Versículo</div></a> 
+  <div class="widgets-container">
+    <div class="widgets-content">
+      <a href="#" onclick="openPopup('Notícias')"><div class="widget visible" id="news">Notícias</div></a>
+      <a href="#" onclick="openPopup('Esporte')"><div class="widget visible" id="sports">Esporte</div></a>
+      <a href="#" onclick="openPopup('Ações')"><div class="widget visible" id="stocks">Ações</div></a>
+      <a href="#" onclick="openPopup('Versículo')"><div class="widget visible" id="verse">Versículo</div></a>
     </div>
   </div>
+
+
+  <!-- Pop-up do Modal -->
+   <div id="popup" class="popup-overlay">
+      <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">&times;</span>
+        <div id="popup-text"></div>
+      </div>
+   </div>
+
   <script src="script.js"></script>
 
 </body>

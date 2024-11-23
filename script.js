@@ -1,8 +1,12 @@
-function showWidget(widgetId, content) {
-  const widget = document.getElementById(widgetId);
-  widget.textContent = content;
-  widget.classList.add("visible");
+function openPopup(content) {
+    document.getElementById('popup-text').innerText = content; 
+    document.getElementById('popup').classList.add('active');  
 }
+
+function closePopup() {
+    document.getElementById('popup').classList.remove('active'); 
+}
+
 
 function showSoccerWidget(widgetId, soccerData) {
   const soccerContainer = document.getElementById(widgetId);
@@ -135,7 +139,8 @@ function hideWidget(widgetId) {
 
 async function fetchHeaderData() {
   try {
-    let temperature = await fetchTemperature();
+    // let temperature = await fetchTemperature();
+    let temperature = 24;
 
     const date = new Date();
     let day = date.getDate();
