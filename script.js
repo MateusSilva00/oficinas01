@@ -294,7 +294,75 @@ function displaySoccer() {
   }
 }
 
+function initializeZoey() {
+  // Selecionando os elementos da interface
+  const zoeyToggle = document.getElementById("zoey-toggle");
+  const zoeyPopup = document.getElementById("zoey-popup");
+  const startRecordingBtn = document.getElementById("start-recording");
+
+  let isRecording = false;
+  let mediaRecorder;
+  let audioChunks = [];
+
+  // Abrir ou fechar o popup quando o ícone "Zoey" for clicado
+  zoeyToggle.addEventListener("click", () => {
+    zoeyPopup.style.display =
+      zoeyPopup.style.display === "block" ? "none" : "block";
+  });
+
+  // Controlar a gravação com o botão
+  startRecordingBtn.addEventListener("click", () => {
+    if (isRecording) {
+      // Se já estiver gravando, parar a gravação
+      mediaRecorder.stop(); // Isso vai chamar a função onstop automaticamente
+
+      startRecordingBtn.disabled = true;
+      startRecordingBtn.textContent = "Finalizando...";
+
+      // Fechar o popup após a gravação, quando a gravação estiver finalizada
+      setTimeout(() => {
+        zoeyPopup.style.display = "none"; // Esconde o popup após a gravação
+        alert("Gravação finalizada. Enviando para a Zoey!");
+        startRecordingBtn.disabled = false;
+        startRecordingBtn.textContent = "Iniciar Gravação"; // Restaura o texto do botão
+        isRecording = false; // Atualiza o estado da gravação
+      }, 1000); // Espera 1 segundo para finalizar a gravação
+    } else {
+      // Se não estiver gravando, iniciar a gravação
+      startRecordingBtn.disabled = true;
+      startRecordingBtn.textContent = "Gravando...";
+
+      // Acessar o microfone e iniciar a gravação
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            // Aqui será processado o áudio após a gravação ser parada
+            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioChunks = []; // Limpar os chunks para a próxima gravação
+          };
+
+          mediaRecorder.start(); // Inicia a gravação
+          isRecording = true; // Marca que está gravando
+
+          startRecordingBtn.textContent = "Parar Gravação"; // Altera o texto do botão
+        })
+        .catch((error) => {
+          alert("Erro ao acessar o microfone: " + error.message);
+        });
+    }
+  });
+}
+
 window.onload = function () {
   fetchHeaderData();
   fetchWidgetsData();
+  initializeZoey();
 };

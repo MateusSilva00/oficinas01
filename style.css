@@ -29,15 +29,61 @@ a, a:visited{
 }
 
 
-
 .zoey {
-    padding: 40px;
+  padding: 30px;
 }
 
 .zoey-content {
     display: flex;
     justify-content: flex-end;
 }
+
+#zoey-toggle {
+    color: #fff;
+    font-size: 35px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.zoey-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.zoey-popup-content {
+    text-align: center;
+}
+
+.zoey-popup h3 {
+    color: #4a90e2;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.zoey-btn {
+    background-color: #4a90e2;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* .zoey-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+} */
+
 
 .widgets-container {
     padding: 20px;
