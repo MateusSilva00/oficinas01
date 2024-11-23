@@ -11,6 +11,10 @@ function openPopup(content) {
     displayNews();
   }
 
+  if (content === "soccer") {
+    displaySoccer();
+  }
+
   document.getElementById("popup").classList.add("active");
 }
 
@@ -94,6 +98,7 @@ async function fetchWidgetsData() {
     window.stockData = services.B3;
     window.bibleQuote = services.Bible;
     window.newsData = services.News;
+    window.soccerData = services.Soccer;
   } catch (error) {
     console.error("Error getting data from server:", error);
   }
@@ -220,6 +225,72 @@ function displayNews() {
     });
   } else {
     popupText.innerText = "Nenhuma notícia disponível.";
+  }
+}
+
+function displaySoccer() {
+  const popupText = document.getElementById("popup-text");
+  popupText.innerHTML = ""; // Limpa o conteúdo do popup
+
+  if (window.soccerData && window.soccerData.length > 0) {
+    const container = document.createElement("div");
+    container.classList.add("soccer-table-container");
+
+    // Título da tabela
+    const title = document.createElement("div");
+    title.classList.add("soccer-table-title");
+    title.textContent = "Partidas do Dia";
+
+    // Tabela de partidas
+    const table = document.createElement("table");
+    table.classList.add("soccer-table");
+
+    const headers = [
+      "Rodada",
+      // "Status da Partida",
+      "Data",
+      "Campeonato",
+      "Time da Casa",
+      "Time Visitante",
+      "Estádio",
+      "Placar",
+    ];
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    headers.forEach((header) => {
+      const th = document.createElement("th");
+      th.textContent = header;
+      th.classList.add("header");
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    window.soccerData.forEach((match) => {
+      const row = document.createElement("tr");
+
+      // <td>${match.matchStatus === "10" ? "Em andamento" : "Finalizado"}</td>
+      row.innerHTML = `
+        <td>${match.round}</td>
+        <td>${new Date(match.dataDaPartida).toLocaleString()}</td>
+        <td>${match.tournament}</td>
+        <td>${match.homeTeam}</td>
+        <td>${match.visitingTeam}</td>
+        <td>${match.stadium}</td>
+        <td>${match.score}</td>
+      `;
+
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    container.appendChild(title);
+    container.appendChild(table);
+
+    popupText.appendChild(container);
+  } else {
+    popupText.innerText = "Nenhuma partida disponível.";
   }
 }
 

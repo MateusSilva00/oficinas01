@@ -39,6 +39,6 @@ async def get_soccer_games(client: AsyncClient) -> list[dict]:
 
     data = response.json()
 
-    games = format_user_response(data)[:5]
+    games = format_user_response(data)[:15]
 
     return games

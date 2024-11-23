@@ -176,38 +176,69 @@ a, a:visited{
 ************************************************************************************************************************
 ************************************************************************************************************************
 */
-.stock-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #1f1f1f; 
-    color: #e0e0e0; 
-    margin-top: 10px;
-    border-radius: 8px;
-    overflow: hidden; 
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+.soccer-table-container {
+  margin-top: 20px;
+  text-align: center;
 }
 
-.stock-table th {
-    background-color: #2b2b2b;
-    color: #4a90e2; 
-    text-align: center;
-    padding: 12px;
-    font-size: 14px;
+.soccer-table-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e0e0e0; /* Cor de título similar ao texto da tabela */
+  margin-bottom: 15px;
+  text-transform: uppercase;
 }
 
-.stock-table td {
-    padding: 12px;
-    border-bottom: 1px solid #333;
-    font-size: 14px;
+.soccer-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1f1f1f; /* Cor de fundo escura */
+  color: #e0e0e0; /* Cor clara para o texto */
+  margin-top: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.stock-table tr:last-child td {
-    border-bottom: none;
+.soccer-table th {
+  background-color: #2b2b2b; /* Fundo escuro para os cabeçalhos */
+  color: #4a90e2; /* Cor azul clara para os textos */
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
 }
 
-.stock-table tbody tr:hover {
-    background-color: #292929; 
-    transition: background-color 0.3s ease;
+.soccer-table td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  font-size: 14px;
+}
+
+.soccer-table tr:last-child td {
+  border-bottom: none;
+}
+
+.soccer-table tbody tr:hover {
+  background-color: #292929; /* Fundo levemente mais claro ao passar o mouse */
+  transition: background-color 0.3s ease;
+}
+
+.soccer-table tbody tr:nth-child(even) td {
+  background-color: #292929; /* Fundo escuro para as linhas pares */
+}
+
+.soccer-table tbody tr:nth-child(odd) td {
+  background-color: #1f1f1f; /* Fundo mais escuro para as linhas ímpares */
+}
+
+.soccer-table td a {
+  color: #3498db; /* Cor dos links */
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.soccer-table td a:hover {
+  color: #e0e0e0; /* Cor ao passar o mouse sobre os links */
 }
 
 
@@ -307,3 +338,77 @@ a, a:visited{
   border-radius: 8px;
   margin-top: 10px;
 }
+
+/* 
+************************************************************************************************************************
+************************************************************************************************************************
+******************************************************* Soccer **********************************************************
+************************************************************************************************************************
+************************************************************************************************************************
+************************************************************************************************************************
+*/
+.soccer-table-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.soccer-table-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e0e0e0; /* Cor de título similar ao texto da tabela */
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.soccer-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1f1f1f; /* Cor de fundo escura */
+  color: #e0e0e0; /* Cor clara para o texto */
+  margin-top: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.soccer-table th {
+  background-color: #2b2b2b; /* Fundo escuro para os cabeçalhos */
+  color: #4a90e2; /* Cor azul clara para os textos */
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.soccer-table td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  font-size: 14px;
+}
+
+.soccer-table tr:last-child td {
+  border-bottom: none;
+}
+
+.soccer-table tbody tr:hover {
+  background-color: #292929; /* Fundo levemente mais claro ao passar o mouse */
+  transition: background-color 0.3s ease;
+}
+
+.soccer-table tbody tr:nth-child(even) td {
+  background-color: #292929; /* Fundo escuro para as linhas pares */
+}
+
+.soccer-table tbody tr:nth-child(odd) td {
+  background-color: #1f1f1f; /* Fundo mais escuro para as linhas ímpares */
+}
+
+.soccer-table td a {
+  color: #3498db; /* Cor dos links */
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.soccer-table td a:hover {
+  color: #e0e0e0; /* Cor ao passar o mouse sobre os links */
+}
+
