@@ -1,21 +1,18 @@
 function openPopup(content) {
-  if (content === "Ações") {
+  if (content === "stocks") {
     displayStockData();
   }
 
-  else {
-    document.getElementById("popup-text").innerText = content;
+  if (content === "bible") {
+    displayBibleQuote();
   }
 
-  document.getElementById('popup').classList.add('active');
+  document.getElementById("popup").classList.add("active");
 }
 
 function closePopup() {
-    document.getElementById('popup').classList.remove('active'); 
+  document.getElementById("popup").classList.remove("active");
 }
-
-
-
 
 async function fetchHeaderData() {
   try {
@@ -91,40 +88,50 @@ async function fetchWidgetsData() {
     document.getElementById("greeting").textContent = `Olá, ${data.username}`;
 
     window.stockData = services.B3;
-
+    window.bibleQuote = services.Bible;
   } catch (error) {
     console.error("Error getting data from server:", error);
   }
 }
 
 function displayStockData() {
-  const popupText = document.getElementById('popup-text');
-  popupText.innerHTML = ''; 
+  const popupText = document.getElementById("popup-text");
+  popupText.innerHTML = "";
+
+  console.log(window.stockData);
 
   if (window.stockData && window.stockData.length > 0) {
-    const table = document.createElement('table');
-    table.classList.add('stock-table');
+    console.log(window.stockData);
+    const table = document.createElement("table");
+    table.classList.add("stock-table");
 
-    const headers = ['Ação', 'Código', 'Valor (R$)', 'Variação no Dia (%)', 'Volume', 'Última Atualização'];
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    headers.forEach(header => {
-      const th = document.createElement('th');
+    const headers = [
+      "Ação",
+      "Código",
+      "Valor (R$)",
+      "Variação no Dia (%)",
+      "Volume",
+      "Última Atualização",
+    ];
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    headers.forEach((header) => {
+      const th = document.createElement("th");
       th.textContent = header;
       headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
-    const tbody = document.createElement('tbody');
-    window.stockData.forEach(stock => {
-      const row = document.createElement('tr');
+    const tbody = document.createElement("tbody");
+    window.stockData.forEach((stock) => {
+      const row = document.createElement("tr");
 
       row.innerHTML = `
         <td>${stock.StockName}</td>
         <td>${stock.StockCode}</td>
         <td>${stock.ValueFormatted}</td>
-        <td>${stock.ChangeDayFormatted || 'N/A'}</td>
+        <td>${stock.ChangeDayFormatted || "N/A"}</td>
         <td>${stock.VolumeFormatted}</td>
         <td>${new Date(stock.Date).toLocaleString()}</td>
       `;
@@ -135,7 +142,36 @@ function displayStockData() {
     table.appendChild(tbody);
     popupText.appendChild(table);
   } else {
-    popupText.innerText = 'Nenhuma ação disponível.';
+    popupText.innerText = "Nenhuma ação disponível.";
+  }
+}
+
+function displayBibleQuote() {
+  const popupText = document.getElementById("popup-text");
+  popupText.innerHTML = "";
+
+  if (window.bibleQuote != null) {
+    const verseContainer = document.createElement("div");
+    verseContainer.classList.add("verse-container");
+
+    const quote = document.createElement("blockquote");
+    quote.textContent = `"${window.bibleQuote.quote}"`;
+    verseContainer.appendChild(quote);
+
+    const book = document.createElement("p");
+    book.classList.add("bible-book");
+    book.textContent = `— ${window.bibleQuote.book}`;
+    verseContainer.appendChild(book);
+
+    const interpretation = document.createElement("p");
+    interpretation.classList.add("bible-interpretation");
+    interpretation.textContent = window.bibleQuote.interpretation;
+    verseContainer.appendChild(interpretation);
+
+    // Adiciona o conteúdo no popup
+    popupText.appendChild(verseContainer);
+  } else {
+    popupText.innerText = "Nenhuma citação bíblica disponível.";
   }
 }
 
