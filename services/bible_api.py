@@ -1,45 +1,49 @@
-import json
+from dataclasses import asdict, dataclass
 
+import httpx
+from bs4 import BeautifulSoup
 from httpx import AsyncClient
 
-URL = "https://bolls.life/get-random-verse/NVT"
+
+@dataclass
+class BibleQuote:
+    quote: str
+    book: str
+    interpretation: str
 
 
-def format_user_response(data: dict) -> str:
-    return (
-        (
-            data["book"]
-            + " "
-            + str(data["chapter"])
-            + ":"
-            + str(data["verse"])
-            + " "
-            + data["text"]
-        )
-        .replace("\n", " ")
-        .replace("<br>", "")
-        .strip()
-    )
-
-
-async def get_bible_quote(client: AsyncClient):
-    response = await client.get(URL, follow_redirects=True)
+async def get_html(client: AsyncClient) -> str:
+    response = await client.get("https://www.bibliaon.com/palavra_do_dia/")
 
     assert response.status_code == 200
 
-    data = response.json()
+    return response.text
 
-    book = str(data["book"])
-    bible_order = json.load(open("services/bible_order.json"))
 
-    del data["pk"]
-    del data["translation"]
-    data["book"] = bible_order[book]["Nome"]
-    data["book_abbr"] = bible_order[book]["Abreviação"]
-    data["user_response"] = format_user_response(data)
+async def get_bible_quote(client: AsyncClient) -> dict:
+    html = await get_html(client)
 
-    return data
+    soup = BeautifulSoup(html, "html.parser")
+
+    article = soup.find("div", {"class": "articlebody"})
+
+    quote = article.find("blockquote").text.replace("\n", " ").strip()
+    quote, book = quote.split(" - ", maxsplit=1)
+
+    interpretation = article.find("blockquote").find_next_siblings("p")[:-1]
+    interpretation = [p.text.replace("\n", " ").strip() for p in interpretation]
+    interpretation = " ".join(interpretation)
+
+    bible_quote = BibleQuote(quote, book, interpretation)
+
+    return asdict(bible_quote)
 
 
 if __name__ == "__main__":
-    print(get_bible_quote())
+    import asyncio
+
+    import httpx
+
+    client = httpx.AsyncClient()
+
+    asyncio.run(get_bible_quote(client))
