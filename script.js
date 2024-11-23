@@ -7,6 +7,10 @@ function openPopup(content) {
     displayBibleQuote();
   }
 
+  if (content === "news") {
+    displayNews();
+  }
+
   document.getElementById("popup").classList.add("active");
 }
 
@@ -89,6 +93,7 @@ async function fetchWidgetsData() {
 
     window.stockData = services.B3;
     window.bibleQuote = services.Bible;
+    window.newsData = services.News;
   } catch (error) {
     console.error("Error getting data from server:", error);
   }
@@ -172,6 +177,49 @@ function displayBibleQuote() {
     popupText.appendChild(verseContainer);
   } else {
     popupText.innerText = "Nenhuma citação bíblica disponível.";
+  }
+}
+
+function displayNews() {
+  const popupText = document.getElementById("popup-text");
+  popupText.innerHTML = "";
+
+  if (window.newsData && window.newsData.length > 0) {
+    window.newsData.forEach((newsItem) => {
+      const newsContainer = document.createElement("div");
+      newsContainer.classList.add("news-container");
+
+      const newsTitle = document.createElement("h3");
+      newsTitle.classList.add("news-title");
+      newsTitle.innerHTML = `<a target="_blank">${newsItem.title}</a>`;
+      newsContainer.appendChild(newsTitle);
+
+      const newsSource = document.createElement("p");
+      newsSource.classList.add("news-source");
+      newsSource.innerHTML = `Fonte: ${newsItem.source}`;
+      newsContainer.appendChild(newsSource);
+
+      const newsDescription = document.createElement("p");
+      newsDescription.classList.add("news-description");
+      newsDescription.innerText = newsItem.description;
+      newsContainer.appendChild(newsDescription);
+
+      const newsDate = document.createElement("p");
+      newsDate.classList.add("news-date");
+      newsDate.innerText = `Publicado em: ${new Date(
+        newsItem.publishedAt
+      ).toLocaleString()}`;
+      newsContainer.appendChild(newsDate);
+
+      const newsImage = document.createElement("img");
+      newsImage.classList.add("news-image");
+      newsImage.src = newsItem.urlToImage;
+      newsContainer.appendChild(newsImage);
+
+      popupText.appendChild(newsContainer);
+    });
+  } else {
+    popupText.innerText = "Nenhuma notícia disponível.";
   }
 }
 
