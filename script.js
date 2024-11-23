@@ -1,6 +1,13 @@
 function openPopup(content) {
-    document.getElementById('popup-text').innerText = content; 
-    document.getElementById('popup').classList.add('active');  
+  if (content === "Ações") {
+    displayStockData();
+  }
+
+  else {
+    document.getElementById("popup-text").innerText = content;
+  }
+
+  document.getElementById('popup').classList.add('active');
 }
 
 function closePopup() {
@@ -8,134 +15,7 @@ function closePopup() {
 }
 
 
-function showSoccerWidget(widgetId, soccerData) {
-  const soccerContainer = document.getElementById(widgetId);
 
-  // Limpa o widget antes de adicionar novos jogos
-  soccerContainer.innerHTML = "";
-
-  soccerData.forEach((match) => {
-    const matchItem = document.createElement("div");
-    matchItem.classList.add("match-item");
-
-    // Criar a descrição do jogo (rodada, times, placar, estádio, etc.)
-    const matchInfoElement = document.createElement("p");
-    matchInfoElement.textContent = `Round ${match.round} - ${match.tournament}`;
-
-    const teamsElement = document.createElement("h3");
-    teamsElement.textContent = `${match.homeTeam} vs ${match.visitingTeam}`;
-
-    const scoreElement = document.createElement("p");
-    scoreElement.textContent = `Score: ${match.score}`;
-
-    const stadiumElement = document.createElement("p");
-    stadiumElement.textContent = `Stadium: ${match.stadium}`;
-
-    const dateElement = document.createElement("p");
-    const matchDate = new Date(match.dataDaPartida).toLocaleString();
-    dateElement.textContent = `Date: ${matchDate}`;
-
-    // Adicionar todos os elementos criados no card de partida
-    matchItem.appendChild(matchInfoElement);
-    matchItem.appendChild(teamsElement);
-    matchItem.appendChild(scoreElement);
-    matchItem.appendChild(stadiumElement);
-    matchItem.appendChild(dateElement);
-
-    // Adicionar o item de partida ao container
-    soccerContainer.appendChild(matchItem);
-  });
-}
-
-function showNewsWidget(widgetId, newsData) {
-  const newsContainer = document.getElementById(widgetId);
-
-  // Limpa o widget antes de adicionar novas notícias
-  newsContainer.innerHTML = "";
-
-  newsData.forEach((news) => {
-    const newsItem = document.createElement("div");
-    newsItem.classList.add("news-item");
-
-    const titleElement = document.createElement("h3");
-    const titleLink = document.createElement("a");
-    titleLink.href = news.url;
-    titleLink.textContent = news.title;
-    titleElement.appendChild(titleLink);
-
-    const sourceAuthorElement = document.createElement("p");
-    sourceAuthorElement.textContent = `Source: ${news.source}, Author: ${
-      news.author || "Unknown"
-    }`;
-
-    const descriptionElement = document.createElement("p");
-    descriptionElement.textContent = news.description;
-
-    //    const imageElement = document.createElement("img");
-    //    imageElement.src = news.urlToImage;
-    //    imageElement.alt = news.title;
-    //    imageElement.classList.add("news-image");
-
-    const dateElement = document.createElement("p");
-    const publishedDate = new Date(news.publishedAt).toLocaleString();
-    dateElement.textContent = `Published at: ${publishedDate}`;
-
-    //newsItem.appendChild(imageElement);
-    newsItem.appendChild(titleElement);
-    newsItem.appendChild(sourceAuthorElement);
-    newsItem.appendChild(descriptionElement);
-    newsItem.appendChild(dateElement);
-
-    newsContainer.appendChild(newsItem);
-  });
-}
-
-function showStockWidget(widgetId, stocksData) {
-  const widget = document.getElementById(widgetId);
-  if (!widget) return;
-
-  let html = `
-    <table border="1" cellpadding="10">
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Change</th>
-          <th>Change Percent</th>
-          <th>Previous Close</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  stocksData.forEach((stock) => {
-    html += `
-      <tr>
-        <td>${stock.symbol}</td>
-        <td>${stock.name}</td>
-        <td>${stock.price.toFixed(2)}</td>
-        <td style="color: ${stock.change >= 0 ? "green" : "red"};">
-          ${stock.change.toFixed(2)}
-        </td>
-        <td>${stock.change_percent.toFixed(2)}%</td>
-        <td>${stock.previous_close.toFixed(2)}</td>
-      </tr>
-    `;
-  });
-
-  html += `
-      </tbody>
-    </table>
-  `;
-
-  widget.innerHTML = html;
-}
-
-function hideWidget(widgetId) {
-  const widget = document.getElementById(widgetId);
-  widget.classList.remove("visible");
-}
 
 async function fetchHeaderData() {
   try {
@@ -210,33 +90,52 @@ async function fetchWidgetsData() {
 
     document.getElementById("greeting").textContent = `Olá, ${data.username}`;
 
-    console.log(data);
+    window.stockData = services.B3;
 
-    if (services.News) {
-      showNewsWidget("news", services.News);
-    } else {
-      hideWidget("news");
-    }
-
-    if (services.Soccer) {
-      showSoccerWidget("sports", services.Soccer);
-    } else {
-      hideWidget("sports");
-    }
-
-    if (services.B3) {
-      showStockWidget("stocks", services.B3);
-    } else {
-      hideWidget("stocks");
-    }
-
-    if (services.Bible) {
-      showWidget("verse", services.Bible.user_response);
-    } else {
-      hideWidget("verse");
-    }
   } catch (error) {
     console.error("Error getting data from server:", error);
+  }
+}
+
+function displayStockData() {
+  const popupText = document.getElementById('popup-text');
+  popupText.innerHTML = ''; 
+
+  if (window.stockData && window.stockData.length > 0) {
+    const table = document.createElement('table');
+    table.classList.add('stock-table');
+
+    const headers = ['Ação', 'Código', 'Valor (R$)', 'Variação no Dia (%)', 'Volume', 'Última Atualização'];
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+      const th = document.createElement('th');
+      th.textContent = header;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    window.stockData.forEach(stock => {
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td>${stock.StockName}</td>
+        <td>${stock.StockCode}</td>
+        <td>${stock.ValueFormatted}</td>
+        <td>${stock.ChangeDayFormatted || 'N/A'}</td>
+        <td>${stock.VolumeFormatted}</td>
+        <td>${new Date(stock.Date).toLocaleString()}</td>
+      `;
+
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    popupText.appendChild(table);
+  } else {
+    popupText.innerText = 'Nenhuma ação disponível.';
   }
 }
 

@@ -109,15 +109,41 @@ a, a:visited{
 
 .popup-content {
     background-color: #1e1e1e;
-    color: #d1d1d1; 
+    color: #d1d1d1;
     padding: 20px 40px;
     border-radius: 12px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-    width: 300px; 
+    width: 350px;  /* Ajuste de largura para acomodar a tabela corretamente */
     text-align: center;
-    position: relative;
+    position: relative; /* Importante para o alinhamento do botão */
+    margin: 0 auto;
+    width: 80%;
 }
 
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #d1d1d1;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 10; /* Garante que o botão esteja acima de outros elementos */
+}
+
+.popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
 .close-btn {
     position: absolute;
     top: 10px;
@@ -144,4 +170,47 @@ a, a:visited{
     to {
         opacity: 1;
     }
+}
+
+
+/* 
+************************************************************************************************************************
+************************************************************************************************************************
+******************************************************* AÇÕES **********************************************************
+************************************************************************************************************************
+************************************************************************************************************************
+************************************************************************************************************************
+*/
+.stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1f1f1f; 
+    color: #e0e0e0; 
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden; 
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.stock-table th {
+    background-color: #2b2b2b;
+    color: #4a90e2; 
+    text-align: center;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.stock-table td {
+    padding: 12px;
+    border-bottom: 1px solid #333;
+    font-size: 14px;
+}
+
+.stock-table tr:last-child td {
+    border-bottom: none;
+}
+
+.stock-table tbody tr:hover {
+    background-color: #292929; 
+    transition: background-color 0.3s ease;
 }
