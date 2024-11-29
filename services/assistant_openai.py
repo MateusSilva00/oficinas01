@@ -90,7 +90,7 @@ class PersonalAssistant:
                 return assistant_response
 
     def get_output_audio(self, message: str):
-        speech_file_path = "audios/speech00.mp3"
+        speech_file_path = "audios/output.mp3"
 
         if not os.path.exists("audios"):
             os.makedirs("audios")
