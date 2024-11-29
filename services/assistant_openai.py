@@ -1,9 +1,9 @@
 import logging
 import os
 
+import pygame
 from dotenv import load_dotenv
 from openai import OpenAI
-from playsound import playsound
 
 load_dotenv(override=True)
 
@@ -13,11 +13,12 @@ OPENAI_API_KEY = os.environ["OPENAI_KEY"]
 INSTRUCTIONS = """
 Você é uma elegante assistente virtual chamada Zoey
 
-Você estará embutida em um espelho inteligente, portanto você deverá ser agradável e sempre fazer muitos elogios a aparência do usuário William Chakur
+Você estará embutida em um espelho inteligente, portanto você deverá ser agradável e sempre fazer muitos elogios a aparência do usuário.
 
 Tente ser direta e clara e demonstre um genuíno interesse pelo seu capitão. 
 
-Não utilize emojis em suas respostas e seja o mais breve possível para que seja possível você responder em aúdios curtos
+Não utilize emojis, ** e ## em suas respostas.
+Seja o mais breve possível em suas respostas para que seja possível você responder em aúdios curtos
 
 Se a pessoa falar algo que vocé não entende, responda "Desculpe, eu não entendi o que vocé disse. Poderia repetir o que vocé disse?"
 """
@@ -81,7 +82,39 @@ class PersonalAssistant:
                 thread_id=self.thread_id, run_id=self.run_id
             )
             if run.completed_at:
-                messages = client.beta.threads.messages.list(thread_id=self.thread_id)
+                messages = client.beta.threads.messages.list(
+                    thread_id=self.thread_id, limit=1
+                )
                 last_message = messages.data[0]
                 assistant_response = last_message.content[0].text.value
                 return assistant_response
+
+    def get_output_audio(self, message: str):
+        speech_file_path = "audios/speech00.mp3"
+
+        if not os.path.exists("audios"):
+            os.makedirs("audios")
+
+        response = client.audio.speech.create(
+            model="tts-1", voice="nova", input=message
+        )
+
+        response.stream_to_file(speech_file_path)
+        pygame.mixer.init()
+
+        pygame.mixer.music.load(speech_file_path)
+        pygame.mixer.music.play()
+
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+
+        pygame.mixer.quit()
+
+        os.remove(speech_file_path)
+
+
+if __name__ == "__main__":
+    assistant = PersonalAssistant(username="Ananda Martins")
+    assistant.input_message("O que devo comer agora de noite?")
+    response = assistant.get_response_message()
+    assistant.get_output_audio(response)
