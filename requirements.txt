@@ -7,3 +7,4 @@ uvicorn
 bs4
 openai
 pygame
+opencv-python
