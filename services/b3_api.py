@@ -22,42 +22,45 @@ class Stock:
 
 load_dotenv(override=True)
 
-URL = "https://api.infomoney.com.br/markets/high-low/b3"
+URL = "https://api.infomoney.com.br/ativos/top-alta-baixa-por-ativo/acao"
 
-USE_B3_COLS = ["symbol", "name", "price", "change", "change_percent", "previous_close"]
-USE_CRYPTO_COLS = ["currency", "exchange_rate", "previous_close", "last_update_utc"]
+
+HEADERS = {
+    "Accept": "*/*",
+    "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Connection": "keep-alive",
+    "DNT": "1",
+    "If-None-Match": '"0e4669b3-e61a-4965-8b5e-b6ad7ff6619c"',
+    "Origin": "https://www.infomoney.com.br",
+    "Referer": "https://www.infomoney.com.br/",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site",
+    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36",
+    "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": '"Android"',
+}
 
 PARAMS = {
     "sector": "Todos",
-    "orderAtributte": "High",
+    "orderAtributte": "Volume",
     "pageIndex": "1",
     "pageSize": "15",
-    "type": "json",
+    "search": "",
 }
-
-
-def get_b3_trends(data: dict) -> dict:
-    dataframe = pd.DataFrame(data)
-    dataframe = dataframe[dataframe["type"] == "stock"]
-
-    dataframe.sort_values(by="change_percent", ascending=False, inplace=True)
-    dataframe = dataframe[USE_B3_COLS]
-
-    top_stocks = dataframe[:5]
-
-    return top_stocks.to_dict("records")
 
 
 async def get_market_trends(client: AsyncClient, is_winner=True) -> list[dict]:
     trend_type = "GAINERS" if is_winner else "LOSERS"
 
-    response = await client.get(URL, follow_redirects=True)
+    response = await client.get(
+        URL, follow_redirects=True, params=PARAMS, headers=HEADERS
+    )
 
     assert response.status_code == 200
 
     data = response.json()
-    date = data["ReferenceDate"]
-
     stocks = []
     for item in data["Data"]:
         stocks.append(Stock(**item))
