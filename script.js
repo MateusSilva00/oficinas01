@@ -1,3 +1,5 @@
+let UserData;
+
 function openPopup(content) {
   if (content === "stocks") {
     displayStockData();
@@ -90,10 +92,12 @@ async function fetchWidgetsData() {
 
     if (!response.ok) throw new Error("Error on the API response");
 
-    const data = await response.json();
-    let services = data.services;
+    UserData = await response.json();
+    let services = UserData.services;
 
-    document.getElementById("greeting").textContent = `Olá, ${data.username}`;
+    document.getElementById(
+      "greeting"
+    ).textContent = `Olá, ${UserData.username}`;
 
     window.stockData = services.B3;
     window.bibleQuote = services.Bible;
@@ -407,10 +411,10 @@ async function stopRecording(
   parameter.setValueAtTime(0, audioContext.currentTime);
 
   const blob = encodeAudio(buffers, settings);
+  console.log("stop recording");
 
   await uploadAudio(blob);
-
-  console.log("stop recording");
+  await playZoeyResponse();
 }
 
 async function uploadAudio(blob) {
@@ -434,6 +438,23 @@ async function uploadAudio(blob) {
     console.log("Áudio enviado com sucesso:", data);
   } catch (error) {
     console.error("Erro ao enviar o áudio:", error);
+  }
+}
+
+async function playZoeyResponse() {
+  try {
+    const response = await fetch("http://localhost:8000/play-zoey-response/", {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `Erro: ${errorData.detail || "Falha ao reproduzir a resposta da Zoey."}`
+      );
+    }
+  } catch (error) {
+    console.error("Erro ao reproduzir a resposta da Zoey:", error);
   }
 }
 

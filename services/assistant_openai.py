@@ -1,9 +1,9 @@
 import logging
 import os
 
-import pygame
 from dotenv import load_dotenv
 from openai import OpenAI
+from playsound import playsound
 
 load_dotenv(override=True)
 
@@ -22,7 +22,10 @@ Seja o mais breve possível em suas respostas para que seja possível você resp
 
 Se a pessoa falar algo que vocé não entende, responda "Desculpe, eu não entendi o que vocé disse. Poderia repetir o que vocé disse?"
 """
+
 MODEL = "gpt-4o-mini"
+ZOEY_SPEECH_FILE_PATH = "audios/output.mp3"
+
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -43,10 +46,10 @@ class PersonalAssistant:
 
     def create_assistant(self):
         assistant = client.beta.assistants.create(
-            name="Personal Trainer",
+            name="Personal Assistant - Zoey",
             instructions=INSTRUCTIONS,
             model=MODEL,
-            temperature=0.7,
+            temperature=1.2,
         )
 
         return assistant.id
@@ -61,6 +64,7 @@ class PersonalAssistant:
             thread_id=self.thread_id,
             assistant_id=self.assistant_id,
             instructions=f"Por favor me chame de {self.username}",
+            max_completion_tokens=300,
         )
 
         return run.id
@@ -90,31 +94,30 @@ class PersonalAssistant:
                 return assistant_response
 
     def get_output_audio(self, message: str):
-        speech_file_path = "audios/output.mp3"
-
         if not os.path.exists("audios"):
             os.makedirs("audios")
 
-        response = client.audio.speech.create(
-            model="tts-1", voice="nova", input=message
+        with client.audio.speech.with_streaming_response.create(
+            model="tts-1", voice="nova", input=message, speed=1.5
+        ) as response:
+            response.stream_to_file(ZOEY_SPEECH_FILE_PATH)
+
+        playsound(ZOEY_SPEECH_FILE_PATH)
+
+        os.remove(ZOEY_SPEECH_FILE_PATH)
+
+    def input_audio_to_text(self) -> str:
+        audio_file = open("audios/input.wav", "rb")
+        transcription = client.audio.transcriptions.create(
+            model="whisper-1", file=audio_file, language="pt"
         )
 
-        response.stream_to_file(speech_file_path)
-        pygame.mixer.init()
-
-        pygame.mixer.music.load(speech_file_path)
-        pygame.mixer.music.play()
-
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
-
-        pygame.mixer.quit()
-
-        os.remove(speech_file_path)
+        return transcription.text
 
 
 if __name__ == "__main__":
     assistant = PersonalAssistant(username="Ananda Martins")
-    assistant.input_message("O que devo comer agora de noite?")
-    response = assistant.get_response_message()
-    assistant.get_output_audio(response)
+    # assistant.input_message("O que devo comer agora de noite?")
+    # response = assistant.get_response_message()
+    # assistant.get_output_audio(response)
+    # assistant.input_audio_to_text()
