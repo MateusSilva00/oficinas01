@@ -393,7 +393,9 @@ function startRecording(
   parameter.setValueAtTime(1, audioContext.currentTime);
   buffers.splice(0, buffers.length);
 
-  console.log("start recording");
+  document.getElementById("recording-indicator").style.display = "block"; // Mostrar indicativo de gravação
+
+  console.log("Start recording");
 }
 
 async function stopRecording(
@@ -411,10 +413,19 @@ async function stopRecording(
   parameter.setValueAtTime(0, audioContext.currentTime);
 
   const blob = encodeAudio(buffers, settings);
-  console.log("stop recording");
+  console.log("Stop recording");
 
-  await uploadAudio(blob);
-  await playZoeyResponse();
+  // Exibe a interface de carregamento futurista
+  const zoeyLoading = document.getElementById("zoey-loading");
+  zoeyLoading.style.display = "flex";
+
+  try {
+    await uploadAudio(blob);
+    await playZoeyResponse();
+  } finally {
+    // Oculta a interface de carregamento após o processamento da resposta da Zoey
+    zoeyLoading.style.display = "none";
+  }
 }
 
 async function uploadAudio(blob) {
