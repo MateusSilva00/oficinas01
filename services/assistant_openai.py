@@ -87,7 +87,7 @@ class PersonalAssistant:
         elapsed_time = end_time - start_time
 
         logger.debug(f"Message sent. Run id: {self.run_id}")
-        logger.debug(f"Time elapsed: {elapsed_time}")
+        logger.debug(f"Time elapsed: {elapsed_time:.2f} ms")
 
     def get_response_message(self):
         start_time = time()
@@ -107,7 +107,7 @@ class PersonalAssistant:
                 end_time = time()
                 elapsed_time = end_time - start_time
 
-                logger.debug(f"Response received. Time elapsed: {elapsed_time}")
+                logger.debug(f"Response received. Time elapsed: {elapsed_time}:.2f ms")
 
                 return assistant_response
 
