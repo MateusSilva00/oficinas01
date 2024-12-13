@@ -3,3 +3,5 @@ logs/
 *__pycache__
 *.mp3
 *.ipynb
+/node_modules/
+/package-lock.json

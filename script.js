@@ -294,71 +294,90 @@ function displaySoccer() {
   }
 }
 
-function initializeZoey() {
-  // Selecionando os elementos da interface
+async function initializeZoey() {
   const zoeyToggle = document.getElementById("zoey-toggle");
   const zoeyPopup = document.getElementById("zoey-popup");
-  const startRecordingBtn = document.getElementById("start-recording");
 
-  let isRecording = false;
-  let mediaRecorder;
-  let audioChunks = [];
-
-  // Abrir ou fechar o popup quando o ícone "Zoey" for clicado
   zoeyToggle.addEventListener("click", () => {
     zoeyPopup.style.display =
       zoeyPopup.style.display === "block" ? "none" : "block";
   });
 
-  // Controlar a gravação com o botão
-  startRecordingBtn.addEventListener("click", () => {
-    if (isRecording) {
-      // Se já estiver gravando, parar a gravação
-      mediaRecorder.stop(); // Isso vai chamar a função onstop automaticamente
+  try {
+    const buttonStart = document.getElementById("start-recording");
+    const buttonStop = document.getElementById("stop-recording");
 
-      startRecordingBtn.disabled = true;
-      startRecordingBtn.textContent = "Finalizando...";
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: false,
+      audio: true,
+    });
 
-      // Fechar o popup após a gravação, quando a gravação estiver finalizada
-      setTimeout(() => {
-        zoeyPopup.style.display = "none"; // Esconde o popup após a gravação
-        alert("Gravação finalizada. Enviando para a Zoey!");
-        startRecordingBtn.disabled = false;
-        startRecordingBtn.textContent = "Iniciar Gravação"; // Restaura o texto do botão
-        isRecording = false; // Atualiza o estado da gravação
-      }, 1000); // Espera 1 segundo para finalizar a gravação
-    } else {
-      // Se não estiver gravando, iniciar a gravação
-      startRecordingBtn.disabled = true;
-      startRecordingBtn.textContent = "Gravando...";
+    const [track] = stream.getAudioTracks();
+    const settings = track.getSettings();
 
-      // Acessar o microfone e iniciar a gravação
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          mediaRecorder = new MediaRecorder(stream);
+    const audioContext = new AudioContext();
+    await audioContext.audioWorklet.addModule("audio-recorder.js");
 
-          mediaRecorder.ondataavailable = (event) => {
-            audioChunks.push(event.data);
-          };
+    const mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    const audioRecorder = new AudioWorkletNode(audioContext, "audio-recorder");
+    const buffers = [];
 
-          mediaRecorder.onstop = () => {
-            // Aqui será processado o áudio após a gravação ser parada
-            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-            const audioUrl = URL.createObjectURL(audioBlob);
-            audioChunks = []; // Limpar os chunks para a próxima gravação
-          };
+    audioRecorder.port.addEventListener("message", (event) => {
+      buffers.push(event.data.buffer);
+    });
 
-          mediaRecorder.start(); // Inicia a gravação
-          isRecording = true; // Marca que está gravando
+    audioRecorder.port.start();
 
-          startRecordingBtn.textContent = "Parar Gravação"; // Altera o texto do botão
-        })
-        .catch((error) => {
-          alert("Erro ao acessar o microfone: " + error.message);
+    mediaStreamSource.connect(audioRecorder);
+    audioRecorder.connect(audioContext.destination);
+
+    buttonStart.addEventListener("click", (event) => {
+      buttonStart.setAttribute("disabled", "disabled");
+      console.log("start recording");
+      buttonStop.removeAttribute("disabled");
+
+      const parameter = audioRecorder.parameters.get("isRecording");
+      parameter.setValueAtTime(1, audioContext.currentTime);
+
+      buffers.splice(0, buffers.length);
+    });
+
+    buttonStop.addEventListener("click", async (event) => {
+      buttonStop.setAttribute("disabled", "disabled");
+      console.log("stop recording");
+      buttonStart.removeAttribute("disabled");
+
+      const parameter = audioRecorder.parameters.get("isRecording");
+      parameter.setValueAtTime(0, audioContext.currentTime);
+
+      const blob = encodeAudio(buffers, settings);
+      const formData = new FormData();
+      formData.append("file", blob, "input.wav");
+
+      try {
+        const response = await fetch("http://localhost:8000/upload-audio/", {
+          method: "POST",
+          body: formData,
         });
-    }
-  });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            `Erro: ${
+              errorData.detail || "Falha ao enviar o áudio para o servidor."
+            }`
+          );
+        }
+
+        const data = await response.json();
+        console.log("Áudio enviado com sucesso:", data);
+      } catch (error) {
+        console.error("Erro ao enviar o áudio:", error);
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao inicializar a gravação:", error);
+  }
 }
 
 window.onload = function () {
