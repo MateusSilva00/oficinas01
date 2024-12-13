@@ -1,9 +1,11 @@
-import logging
 import os
+from time import time
 
 from dotenv import load_dotenv
 from openai import OpenAI
 from playsound import playsound
+
+from src.logger import logger
 
 load_dotenv(override=True)
 
@@ -36,7 +38,7 @@ class PersonalAssistant:
         self.assistant_id = self.create_assistant()
         self.thread_id = self.create_thread()
 
-        logging.debug(
+        logger.debug(
             f"""
             Assistant id: {self.assistant_id}
             Thread id: {self.thread_id}
@@ -70,7 +72,8 @@ class PersonalAssistant:
         return run.id
 
     def input_message(self, message: str):
-
+        start_time = time()
+        logger.debug(f"Sending message: {message}")
         response = client.beta.threads.messages.create(
             thread_id=self.thread_id,
             role="user",
@@ -80,7 +83,16 @@ class PersonalAssistant:
         self.run_id = self.create_run()
         self.last_message_id = response.id
 
+        end_time = time()
+        elapsed_time = end_time - start_time
+
+        logger.debug(f"Message sent. Run id: {self.run_id}")
+        logger.debug(f"Time elapsed: {elapsed_time}")
+
     def get_response_message(self):
+        start_time = time()
+        logger.debug("Waiting for OpenAPI response...")
+
         while True:
             run = client.beta.threads.runs.retrieve(
                 thread_id=self.thread_id, run_id=self.run_id
@@ -91,26 +103,36 @@ class PersonalAssistant:
                 )
                 last_message = messages.data[0]
                 assistant_response = last_message.content[0].text.value
+
+                end_time = time()
+                elapsed_time = end_time - start_time
+
+                logger.debug(f"Response received. Time elapsed: {elapsed_time}")
+
                 return assistant_response
 
     def get_output_audio(self, message: str):
         if not os.path.exists("audios"):
             os.makedirs("audios")
 
+        logger.debug("Generating audio...")
         with client.audio.speech.with_streaming_response.create(
-            model="tts-1", voice="nova", input=message, speed=1.5
+            model="tts-1", voice="nova", input=message, speed=1.25
         ) as response:
             response.stream_to_file(ZOEY_SPEECH_FILE_PATH)
 
+        logger.debug("Audio generated. Executing...")
         playsound(ZOEY_SPEECH_FILE_PATH)
 
         os.remove(ZOEY_SPEECH_FILE_PATH)
 
     def input_audio_to_text(self) -> str:
+        logger.debug("Transcribing audio...")
         audio_file = open("audios/input.wav", "rb")
         transcription = client.audio.transcriptions.create(
             model="whisper-1", file=audio_file, language="pt"
         )
+        logger.debug("Audio transcribed.")
 
         return transcription.text
 

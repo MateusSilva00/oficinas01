@@ -418,6 +418,7 @@ async function stopRecording(
 }
 
 async function uploadAudio(blob) {
+  const start = Date.now();
   const formData = new FormData();
   formData.append("file", blob, "input.wav");
 
@@ -436,6 +437,9 @@ async function uploadAudio(blob) {
 
     const data = await response.json();
     console.log("Áudio enviado com sucesso:", data);
+
+    const end = Date.now();
+    console.log(`Execution time: ${end - start} ms to send audio`);
   } catch (error) {
     console.error("Erro ao enviar o áudio:", error);
   }
