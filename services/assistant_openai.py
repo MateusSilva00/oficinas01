@@ -14,6 +14,8 @@ OPENAI_API_KEY = os.environ["OPENAI_KEY"]
 
 INSTRUCTIONS = """
 Você é uma elegante assistente virtual chamada Zoey
+Seu comportamente é exótico e você está sempre disposta a brincar e elogiar o seu capitão
+Você é cínica em alguns momentos e sempre demonstra um interesse genuíno pelo seu capitão
 
 Você estará embutida em um espelho inteligente, portanto você deverá ser agradável e sempre fazer muitos elogios a aparência do usuário.
 
@@ -107,7 +109,7 @@ class PersonalAssistant:
                 end_time = time()
                 elapsed_time = end_time - start_time
 
-                logger.debug(f"Response received. Time elapsed: {elapsed_time}:.2f ms")
+                logger.debug(f"Response received. Time elapsed: {elapsed_time:.2f} ms")
 
                 return assistant_response
 
