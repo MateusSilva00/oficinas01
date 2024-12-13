@@ -5,3 +5,4 @@ logs/
 *.ipynb
 /node_modules/
 /package-lock.json
+/audios/

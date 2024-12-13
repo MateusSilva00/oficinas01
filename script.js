@@ -297,86 +297,143 @@ function displaySoccer() {
 async function initializeZoey() {
   const zoeyToggle = document.getElementById("zoey-toggle");
   const zoeyPopup = document.getElementById("zoey-popup");
+  setupToggle(zoeyToggle, zoeyPopup);
 
+  try {
+    const stream = await getUserAudioStream();
+    const audioContext = await setupAudioContext();
+    const settings = stream.getAudioTracks()[0].getSettings();
+    const { audioRecorder, buffers } = await setupAudioRecorder(
+      audioContext,
+      stream
+    );
+    setupRecordingButtons(audioRecorder, buffers, audioContext, settings);
+  } catch (error) {
+    console.error("Erro ao inicializar a gravação:", error);
+  }
+}
+
+function setupToggle(zoeyToggle, zoeyPopup) {
   zoeyToggle.addEventListener("click", () => {
     zoeyPopup.style.display =
       zoeyPopup.style.display === "block" ? "none" : "block";
   });
+}
+
+async function getUserAudioStream() {
+  return await navigator.mediaDevices.getUserMedia({
+    video: false,
+    audio: true,
+  });
+}
+
+async function setupAudioContext() {
+  const audioContext = new AudioContext();
+  await audioContext.audioWorklet.addModule("audio-recorder.js");
+  return audioContext;
+}
+
+async function setupAudioRecorder(audioContext, stream) {
+  const mediaStreamSource = audioContext.createMediaStreamSource(stream);
+  const audioRecorder = new AudioWorkletNode(audioContext, "audio-recorder");
+  const buffers = [];
+
+  audioRecorder.port.addEventListener("message", (event) => {
+    buffers.push(event.data.buffer);
+  });
+  audioRecorder.port.start();
+
+  mediaStreamSource.connect(audioRecorder);
+  audioRecorder.connect(audioContext.destination);
+
+  return { audioRecorder, buffers };
+}
+
+function setupRecordingButtons(audioRecorder, buffers, audioContext, settings) {
+  const buttonStart = document.getElementById("start-recording");
+  const buttonStop = document.getElementById("stop-recording");
+
+  buttonStart.addEventListener("click", () =>
+    startRecording(
+      buttonStart,
+      buttonStop,
+      audioRecorder,
+      buffers,
+      audioContext
+    )
+  );
+
+  buttonStop.addEventListener("click", () =>
+    stopRecording(
+      buttonStart,
+      buttonStop,
+      audioRecorder,
+      buffers,
+      audioContext,
+      settings
+    )
+  );
+}
+
+function startRecording(
+  buttonStart,
+  buttonStop,
+  audioRecorder,
+  buffers,
+  audioContext
+) {
+  buttonStart.setAttribute("disabled", "disabled");
+  buttonStop.removeAttribute("disabled");
+
+  const parameter = audioRecorder.parameters.get("isRecording");
+  parameter.setValueAtTime(1, audioContext.currentTime);
+  buffers.splice(0, buffers.length);
+
+  console.log("start recording");
+}
+
+async function stopRecording(
+  buttonStart,
+  buttonStop,
+  audioRecorder,
+  buffers,
+  audioContext,
+  settings
+) {
+  buttonStop.setAttribute("disabled", "disabled");
+  buttonStart.removeAttribute("disabled");
+
+  const parameter = audioRecorder.parameters.get("isRecording");
+  parameter.setValueAtTime(0, audioContext.currentTime);
+
+  const blob = encodeAudio(buffers, settings);
+
+  await uploadAudio(blob);
+
+  console.log("stop recording");
+}
+
+async function uploadAudio(blob) {
+  const formData = new FormData();
+  formData.append("file", blob, "input.wav");
 
   try {
-    const buttonStart = document.getElementById("start-recording");
-    const buttonStop = document.getElementById("stop-recording");
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: false,
-      audio: true,
+    const response = await fetch("http://localhost:8000/upload-audio/", {
+      method: "POST",
+      body: formData,
     });
 
-    const [track] = stream.getAudioTracks();
-    const settings = track.getSettings();
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `Erro: ${errorData.detail || "Falha ao enviar o áudio."}`
+      );
+    }
 
-    const audioContext = new AudioContext();
-    await audioContext.audioWorklet.addModule("audio-recorder.js");
-
-    const mediaStreamSource = audioContext.createMediaStreamSource(stream);
-    const audioRecorder = new AudioWorkletNode(audioContext, "audio-recorder");
-    const buffers = [];
-
-    audioRecorder.port.addEventListener("message", (event) => {
-      buffers.push(event.data.buffer);
-    });
-
-    audioRecorder.port.start();
-
-    mediaStreamSource.connect(audioRecorder);
-    audioRecorder.connect(audioContext.destination);
-
-    buttonStart.addEventListener("click", (event) => {
-      buttonStart.setAttribute("disabled", "disabled");
-      console.log("start recording");
-      buttonStop.removeAttribute("disabled");
-
-      const parameter = audioRecorder.parameters.get("isRecording");
-      parameter.setValueAtTime(1, audioContext.currentTime);
-
-      buffers.splice(0, buffers.length);
-    });
-
-    buttonStop.addEventListener("click", async (event) => {
-      buttonStop.setAttribute("disabled", "disabled");
-      console.log("stop recording");
-      buttonStart.removeAttribute("disabled");
-
-      const parameter = audioRecorder.parameters.get("isRecording");
-      parameter.setValueAtTime(0, audioContext.currentTime);
-
-      const blob = encodeAudio(buffers, settings);
-      const formData = new FormData();
-      formData.append("file", blob, "input.wav");
-
-      try {
-        const response = await fetch("http://localhost:8000/upload-audio/", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            `Erro: ${
-              errorData.detail || "Falha ao enviar o áudio para o servidor."
-            }`
-          );
-        }
-
-        const data = await response.json();
-        console.log("Áudio enviado com sucesso:", data);
-      } catch (error) {
-        console.error("Erro ao enviar o áudio:", error);
-      }
-    });
+    const data = await response.json();
+    console.log("Áudio enviado com sucesso:", data);
   } catch (error) {
-    console.error("Erro ao inicializar a gravação:", error);
+    console.error("Erro ao enviar o áudio:", error);
   }
 }
 
