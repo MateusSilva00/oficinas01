@@ -119,7 +119,7 @@ class PersonalAssistant:
 
         logger.debug("Generating audio...")
         with client.audio.speech.with_streaming_response.create(
-            model="tts-1", voice="nova", input=message, speed=1.25
+            model="tts-1", voice="nova", input=message, speed=1.15
         ) as response:
             response.stream_to_file(ZOEY_SPEECH_FILE_PATH)
 

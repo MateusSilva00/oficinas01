@@ -421,13 +421,12 @@ async function stopRecording(
 
   try {
     await uploadAudio(blob);
+    document.getElementById("recording-indicator").style.display = "none";
     await playZoeyResponse();
   } finally {
     // Oculta a interface de carregamento após o processamento da resposta da Zoey
     zoeyLoading.style.display = "none";
   }
-
-  document.getElementById("recording-indicator").style.display = "none";
 }
 
 async function uploadAudio(blob) {
