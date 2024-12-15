@@ -1,4 +1,5 @@
 import os
+import random
 import time
 import tkinter as tk
 from tkinter import messagebox
@@ -126,7 +127,7 @@ def register_user_face(username):
             1,
         )
 
-        face_id = username
+        face_id = random.randint(1, 1000)
 
         for x, y, w, h in faces:
             count += 1
@@ -134,7 +135,7 @@ def register_user_face(username):
                 f"Total de amostras capturadas para {username}: {count}/{SAMPLE}"
             )
             cv2.imwrite(
-                f"user_data/face.{face_id}.{count}.jpg",
+                f"user_data/face_{username}_{face_id}_{count}.jpg",
                 converted_image[y : y + h, x : x + w],
             )
             if count >= SAMPLE:
@@ -178,17 +179,23 @@ def train_data():
         for imagePath in imagesPaths:
             gray_image = Image.open(imagePath).convert("L")
             img_arr = np.array(gray_image, "uint8")
-            _id = int(os.path.split(imagePath)[-1].split(".")[1])
+            _id = int(os.path.split(imagePath)[-1].rsplit("_")[2])
             faces = detector.detectMultiScale(img_arr)
 
             for x, y, w, h in faces:
                 faceSamples.append(img_arr[y : y + h, x : x + w])
                 ids.append(_id)
+
         return faceSamples, ids
+
+    def clean_folder(path):
+        for file in os.listdir(path):
+            os.remove(os.path.join(path, file))
 
     faces, ids = Images_And_Labels("user_data")
     recognizer.train(faces, np.array(ids))
     recognizer.write("trained_data.yml")
+    clean_folder("user_data")
 
     logger.debug("Treinamento concluído e dados salvos.")
 
