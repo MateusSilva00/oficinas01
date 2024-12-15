@@ -56,18 +56,18 @@ def face_detection(name):
             cv2.rectangle(img, (x, y), (x + w, y + h), (128, 203, 196), 2)
             _id, accuracy = recognizer.predict(converted_image[y : y + h, x : x + w])
 
-            # if accuracy < 100:
-            accuracy_value = round(100 - accuracy)
-            logger.debug(
-                f"Usuário {name} reconhecido com acurácia de {accuracy_value}%"
-            )
-            if accuracy_value >= 60 and not user_recognized:
-                user_recognized = True
-                messagebox.showinfo(
-                    "Reconhecimento", f"Usuário {name} reconhecido com sucesso!"
+            if accuracy < 100:
+                accuracy_value = round(100 - accuracy)
+                logger.debug(
+                    f"Usuário {name} reconhecido com acurácia de {accuracy_value}%"
                 )
-            # else:
-            #     accuracy_value = round(100 - accuracy)
+                if accuracy_value >= 60 and not user_recognized:
+                    user_recognized = True
+                    messagebox.showinfo(
+                        "Reconhecimento", f"Usuário {name} reconhecido com sucesso!"
+                    )
+            else:
+                accuracy_value = round(100 - accuracy)
 
             cv2.putText(
                 img,
@@ -89,11 +89,8 @@ def face_detection(name):
     cv2.destroyAllWindows()
 
 
-def register_user():
-    global name
-    name = name_entry.get()
-    face_id = int(id_entry.get())
-    SAMPLE = 20
+def register_user_face(username):
+    SAMPLE = 10
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     cam = cv2.VideoCapture(0)
@@ -104,7 +101,7 @@ def register_user():
         cv2.data.haarcascades + "haarcascade_frontalface_alt.xml"
     )
 
-    logger.debug(f"Iniciando cadastro do usuário: {name} (ID: {face_id})")
+    logger.debug(f"Iniciando cadastro do usuário: {username}")
 
     count = 0
     while True:
@@ -117,7 +114,7 @@ def register_user():
         img = cv2.flip(img, 1)
         converted_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = detector.detectMultiScale(converted_image, 1.3, 5)
-        time.sleep(1)
+        time.sleep(0.8)
 
         cv2.putText(
             img,
@@ -129,8 +126,13 @@ def register_user():
             1,
         )
 
+        face_id = username
+
         for x, y, w, h in faces:
             count += 1
+            logger.debug(
+                f"Total de amostras capturadas para {username}: {count}/{SAMPLE}"
+            )
             cv2.imwrite(
                 f"user_data/face.{face_id}.{count}.jpg",
                 converted_image[y : y + h, x : x + w],
@@ -150,13 +152,13 @@ def register_user():
     cv2.destroyAllWindows()
 
     logger.debug(
-        f"Cadastro do usuário {name} concluído com {count} amostras capturadas."
+        f"Cadastro do usuário {username} concluído com {count} amostras capturadas."
     )
 
-    messagebox.showinfo("Cadastro", f"Usuário {name} cadastrado com sucesso!")
+    messagebox.showinfo("Cadastro", f"Usuário {username} cadastrado com sucesso!")
 
     train_data()
-    face_detection(name)
+    # face_detection(name)
 
 
 # Função para treinar os dados
@@ -213,7 +215,7 @@ def open_registration_screen():
     id_entry.pack(pady=5)
 
     tk.Button(
-        root, text="Cadastrar", command=register_user, bg="#00796b", fg="#ffffff"
+        root, text="Cadastrar", command=register_user_face, bg="#00796b", fg="#ffffff"
     ).pack(pady=20)
 
 
@@ -250,20 +252,20 @@ def open_initial_screen():
     ).pack(pady=20)
 
 
-root = tk.Tk()
-root.title("Face Recognition System")
-root.geometry("400x600")
-root.configure(bg="#212121")
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Face Recognition System")
+    root.geometry("400x600")
+    root.configure(bg="#212121")
 
+    window_width = 400
+    window_height = 600
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    position_top = int(screen_height / 2 - window_height / 2)
+    position_right = int(screen_width / 2 - window_width / 2)
+    root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
 
-window_width = 400
-window_height = 600
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-position_top = int(screen_height / 2 - window_height / 2)
-position_right = int(screen_width / 2 - window_width / 2)
-root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+    open_initial_screen()
 
-open_initial_screen()
-
-root.mainloop()
+    root.mainloop()

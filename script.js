@@ -84,7 +84,7 @@ function updateClock() {
 
 async function fetchWidgetsData() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/users/1", {
+    const response = await fetch("http://127.0.0.1:8000/users/0", {
       headers: {
         accept: "application/json",
       },
@@ -92,7 +92,18 @@ async function fetchWidgetsData() {
 
     if (!response.ok) throw new Error("Error on the API response");
 
-    UserData = await response.json();
+    const UserData = await response.json();
+
+    if (
+      !UserData ||
+      Object.keys(UserData).length === 0 ||
+      UserData.users === 0
+    ) {
+      redirectToFallbackPage();
+      return;
+    }
+
+    // Continua com o processamento normal caso o usuário exista
     let services = UserData.services;
 
     document.getElementById(
@@ -105,7 +116,12 @@ async function fetchWidgetsData() {
     window.soccerData = services.Soccer;
   } catch (error) {
     console.error("Error getting data from server:", error);
+    redirectToFallbackPage();
   }
+}
+
+function redirectToFallbackPage() {
+  window.location.href = "fallback.html";
 }
 
 function displayStockData() {

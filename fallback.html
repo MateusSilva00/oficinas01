@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Página de Ação</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: black;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      background-color: white;
+      color: black;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: grey;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ação necessária</h1>
+    <button onclick="location.href='register.html'">Cadastrar Usuário</button>
+    <button onclick="location.href='face_recognition.html'">Reconhecer Face</button>
+  </div>
+</body>
+</html>

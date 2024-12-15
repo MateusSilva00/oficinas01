@@ -2,11 +2,12 @@ import os
 import shutil
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Body, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from services.assistant_openai import PersonalAssistant
 from src.database import init_db
+from src.face_detection import register_user_face
 from src.logger import logger
 from src.user_service import UserService
 
@@ -69,6 +70,13 @@ async def play_zoey_response():
     message_to_zoey = app.state.UserPersonalAssistant.input_audio_to_text()
     app.state.UserPersonalAssistant.input_message(message_to_zoey)
     response = app.state.UserPersonalAssistant.get_response_message()
+    logger.debug(f"Response: {response}")
     app.state.UserPersonalAssistant.get_output_audio(response)
 
     return {"Status": "OK", "Response": response}
+
+
+@app.post("/register-face")
+async def register_face(username: str = Body(..., media_type="text/plain")):
+    logger.debug(f"Registering face for user: {username}")
+    register_user_face(username)
