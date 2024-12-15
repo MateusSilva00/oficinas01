@@ -18,7 +18,8 @@ def init_db():
                 b3 BOOLEAN NOT NULL DEFAULT 0,
                 bible BOOLEAN NOT NULL DEFAULT 0,
                 news BOOLEAN NOT NULL DEFAULT 0,
-                soccer BOOLEAN NOT NULL DEFAULT 0
+                soccer BOOLEAN NOT NULL DEFAULT 0,
+                yaml_face TEXT
             )
             """
             )
@@ -41,7 +42,7 @@ def init_db():
                             True,
                             True,
                             True,
-                        ),  # Usuário 1 com tudo
+                        ),
                         (
                             "Lucas",
                             False,

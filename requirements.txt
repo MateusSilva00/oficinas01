@@ -10,3 +10,5 @@ pygame
 opencv-python
 python-multipart
 Pillow
+pyyaml
+opencv-contrib-python

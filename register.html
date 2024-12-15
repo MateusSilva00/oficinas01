@@ -102,13 +102,12 @@
         return;
       }
 
-      // Chamar a API enviando apenas o nome como string
       fetch("http://127.0.0.1:8000/register-face", {
         method: "POST",
         headers: {
           "Content-Type": "text/plain"
         },
-        body: name // Envia o nome diretamente como string
+        body: name 
       })
         .then(response => {
           if (response.ok) {
@@ -142,7 +141,7 @@
           .then(response => {
             if (response.ok) {
               alert("Usuário cadastrado com sucesso!");
-              window.location.href = "index.html";
+                window.location.href = "register.html";
             } else {
               alert("Erro ao cadastrar usuário.");
             }
