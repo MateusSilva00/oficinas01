@@ -83,8 +83,9 @@ function updateClock() {
 }
 
 async function fetchWidgetsData() {
+  hidden_id = document.getElementById("hidden-id").textContent;
   try {
-    const response = await fetch("http://127.0.0.1:8000/users/0", {
+    const response = await fetch("http://127.0.0.1:8000/users/" + hidden_id, {
       headers: {
         accept: "application/json",
       },
@@ -198,7 +199,6 @@ function displayBibleQuote() {
     interpretation.textContent = window.bibleQuote.interpretation;
     verseContainer.appendChild(interpretation);
 
-    // Adiciona o conteúdo no popup
     popupText.appendChild(verseContainer);
   } else {
     popupText.innerText = "Nenhuma citação bíblica disponível.";
@@ -250,7 +250,7 @@ function displayNews() {
 
 function displaySoccer() {
   const popupText = document.getElementById("popup-text");
-  popupText.innerHTML = ""; // Limpa o conteúdo do popup
+  popupText.innerHTML = "";
 
   if (window.soccerData && window.soccerData.length > 0) {
     const container = document.createElement("div");

@@ -11,7 +11,7 @@ from PIL import Image
 from src.logger import logger
 
 
-def face_detection(name):
+def face_detection(username: str):
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read("trained_data.yml")
     faceCascade = cv2.CascadeClassifier(
@@ -19,7 +19,7 @@ def face_detection(name):
     )
     font = cv2.FONT_HERSHEY_SIMPLEX
 
-    names = ["", name]
+    names = ["", username]
     cam = cv2.VideoCapture(0)
 
     if not cam.isOpened():
@@ -34,7 +34,7 @@ def face_detection(name):
 
     user_recognized = False
 
-    logger.debug(f"Iniciando reconhecimento facial para {name}")
+    logger.debug(f"Iniciando reconhecimento facial para {username}")
 
     while True:
         ret, img = cam.read()
@@ -60,19 +60,22 @@ def face_detection(name):
             if accuracy < 100:
                 accuracy_value = round(100 - accuracy)
                 logger.debug(
-                    f"Usuário {name} reconhecido com acurácia de {accuracy_value}%"
+                    f"Usuário {username} reconhecido com acurácia de {accuracy_value}%"
                 )
                 if accuracy_value >= 60 and not user_recognized:
                     user_recognized = True
                     messagebox.showinfo(
-                        "Reconhecimento", f"Usuário {name} reconhecido com sucesso!"
+                        "Reconhecimento", f"Usuário {username} reconhecido com sucesso!"
                     )
+                    cam.release()
+                    cv2.destroyAllWindows()
+                    return
             else:
                 accuracy_value = round(100 - accuracy)
 
             cv2.putText(
                 img,
-                f"{name} - {accuracy_value}%",
+                f"{username} - {accuracy_value}%",
                 (x + 5, y - 5),
                 font,
                 1,
@@ -91,7 +94,7 @@ def face_detection(name):
 
 
 def register_user_face(username):
-    SAMPLE = 10
+    SAMPLE = 20
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     cam = cv2.VideoCapture(0)

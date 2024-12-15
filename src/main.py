@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from services.assistant_openai import PersonalAssistant
 from src.database import get_db_connection, init_db
-from src.face_detection import register_user_face
+from src.face_detection import face_detection, register_user_face
 from src.logger import logger
 from src.user_service import UserService
 
@@ -46,10 +46,11 @@ user_service = UserService()
 async def get_user(user_id: int):
     user = await user_service.get_user_services(user_id)
 
-    app.state.UserPersonalAssistant = PersonalAssistant(user["username"])
-
     if not user:
         raise HTTPException(status_code=404, detail=f"User with id {user_id} not found")
+
+    app.state.UserPersonalAssistant = PersonalAssistant(user["username"])
+
     return user
 
 
@@ -128,3 +129,22 @@ async def register_user(user_data: UserRegistration):
         conn.close()
 
     return {"Message": "Usuario cadastrado com sucesso!"}
+
+
+@app.post("/face_detection")
+def user_face_detection(username: str = Body(..., media_type="text/plain")):
+    conn = get_db_connection()
+
+    query = f"SELECT yaml_face, user_id FROM users WHERE username = '{username}'"
+
+    face_data = conn.execute(query).fetchone()
+
+    with open("trained_data.yml", "w") as file:
+        file.write(face_data[0])
+
+    _id = face_data[1]
+
+    conn.close()
+    face_detection(username)
+
+    return {"Message": "Reconhecimento facial realizado com sucesso!", "User ID": _id}
