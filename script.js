@@ -26,7 +26,7 @@ function closePopup() {
 
 async function fetchHeaderData() {
   try {
-    let temperature = await fetchTemperatureHumidiity();
+    await fetchTemperatureHumidiity();
 
     const date = new Date();
     let day = date.getDate();
@@ -35,7 +35,6 @@ async function fetchHeaderData() {
     let currentDate = `${day}/${month}/${year}`;
 
     document.getElementById("date").textContent = currentDate;
-    document.getElementById("temperature").textContent = `${temperature}°C`;
 
     updateClock();
     setInterval(updateClock, 1000);
