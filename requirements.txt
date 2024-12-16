@@ -11,3 +11,4 @@ Pillow
 opencv-contrib-python
 adafruit-circuitpython-dht
 playsound==1.2.2
+locust
