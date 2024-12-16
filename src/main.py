@@ -2,8 +2,10 @@ import os
 import shutil
 import sqlite3
 from contextlib import asynccontextmanager
+from time import sleep
 
-import yaml
+import adafruit_dht
+import board
 from fastapi import Body, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -148,3 +150,16 @@ def user_face_detection(username: str = Body(..., media_type="text/plain")):
     face_detection(username)
 
     return {"Message": "Reconhecimento facial realizado com sucesso!", "User ID": _id}
+
+
+@app.get("/temperature_humidity")
+async def get_temperature_humidity():
+    dht_device = adafruit_dht.DHT11(board.D4)
+
+    temperature = dht_device.temperature
+    humidity = dht_device.humidity
+
+    if temperature is not None and humidity is not None:
+        return {"temperature": temperature, "humidity": humidity}
+    else:
+        return {"error": "Failed to read temperature or humidity"}

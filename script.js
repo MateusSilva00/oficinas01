@@ -26,8 +26,7 @@ function closePopup() {
 
 async function fetchHeaderData() {
   try {
-    // let temperature = await fetchTemperature();
-    let temperature = 24;
+    let temperature = await fetchTemperatureHumidiity();
 
     const date = new Date();
     let day = date.getDate();
@@ -45,31 +44,27 @@ async function fetchHeaderData() {
   }
 }
 
-async function fetchTemperature() {
-  const url = "https://open-weather13.p.rapidapi.com/city/curitiba/PT_BR";
-  const options = {
-    method: "GET",
-    headers: {
-      "x-rapidapi-key": "0a9281447bmsh050ae130452ed49p1bc1cdjsn28d1e7d60a18",
-      "x-rapidapi-host": "open-weather13.p.rapidapi.com",
-    },
-  };
+async function fetchTemperatureHumidiity() {
+  fetch("http://127.0.0.1:8000/temperature_humidity")
+    .then((response) => response.json())
+    .then((data) => {
+      const resultDiv = document.getElementById("weather");
 
-  try {
-    const response = await fetch(url, options);
-    const result = await response.json();
-
-    let tempFahrenheit = result.main.temp;
-
-    let tempCelsius = ((tempFahrenheit - 32) * 5) / 9;
-    tempCelsius = tempCelsius.toFixed(2);
-
-    console.log(`Temperatura em Celsius: ${tempCelsius}°C`);
-
-    return tempCelsius;
-  } catch (error) {
-    console.error(error);
-  }
+      if (data.temperature !== undefined && data.humidity !== undefined) {
+        resultDiv.innerHTML = `
+              <p>Temperatura: ${data.temperature} °C</p>
+              <p>Umidade: ${data.humidity} %</p>
+            `;
+      } else {
+        resultDiv.innerHTML = `<p>Erro ao ler temperatura ou umidade</p>`;
+      }
+    })
+    .catch((error) => {
+      console.error("Erro ao tentar obter dados:", error);
+      document.getElementById(
+        "result"
+      ).innerHTML = `<p>Erro ao se conectar ao servidor</p>`;
+    });
 }
 
 function updateClock() {
@@ -85,7 +80,7 @@ function updateClock() {
 async function fetchWidgetsData() {
   hidden_id = document.getElementById("hidden-id").textContent;
   try {
-    const response = await fetch("http://127.0.0.1:8000/users/" + hidden_id, {
+    const response = await fetch("http://127.0.0.1:8000/users/1", {
       headers: {
         accept: "application/json",
       },
