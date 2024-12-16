@@ -159,7 +159,9 @@ async def get_temperature_humidity():
     temperature = dht_device.temperature
     humidity = dht_device.humidity
 
-    if temperature is not None and humidity is not None:
-        return {"temperature": temperature, "humidity": humidity}
-    else:
-        return {"error": "Failed to read temperature or humidity"}
+    while temperature is None or humidity is None:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
+
+        if temperature is not None and humidity is not None:
+            return {"temperature": temperature, "humidity": humidity}
