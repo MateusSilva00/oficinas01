@@ -89,7 +89,7 @@ class PersonalAssistant:
         elapsed_time = end_time - start_time
 
         logger.debug(f"Message sent. Run id: {self.run_id}")
-        logger.debug(f"Time elapsed: {elapsed_time:.2f} ms")
+        logger.debug(f"Time elapsed to send message: {elapsed_time:.2f} ms")
 
     def get_response_message(self):
         start_time = time()
@@ -114,6 +114,7 @@ class PersonalAssistant:
                 return assistant_response
 
     def get_output_audio(self, message: str):
+        start_time = time()
         if not os.path.exists("audios"):
             os.makedirs("audios")
 
@@ -123,18 +124,28 @@ class PersonalAssistant:
         ) as response:
             response.stream_to_file(ZOEY_SPEECH_FILE_PATH)
 
+        end_time = time()
+        elapsed_time = end_time - start_time
+        logger.debug(f"Time elapsed to generate audio: {elapsed_time:.2f} ms")
+
         logger.debug("Audio generated. Executing...")
         playsound(ZOEY_SPEECH_FILE_PATH)
 
         os.remove(ZOEY_SPEECH_FILE_PATH)
 
     def input_audio_to_text(self) -> str:
+        start_time = time()
         logger.debug("Transcribing audio...")
         audio_file = open("audios/input.wav", "rb")
         transcription = client.audio.transcriptions.create(
             model="whisper-1", file=audio_file, language="pt"
         )
         logger.debug("Audio transcribed.")
+
+        end_time = time()
+        elapsed_time = end_time - start_time
+
+        logger.debug(f"Time elapsed to transcribe: {elapsed_time:.2f} ms")
 
         return transcription.text
 

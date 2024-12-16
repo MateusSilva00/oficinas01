@@ -1,8 +1,10 @@
 from dataclasses import asdict, dataclass
+from time import time
 
-import pandas as pd
 from dotenv import load_dotenv
 from httpx import AsyncClient
+
+from src.logger import logger
 
 
 @dataclass
@@ -52,6 +54,7 @@ PARAMS = {
 
 
 async def get_market_trends(client: AsyncClient, is_winner=True) -> list[dict]:
+    start_time = time()
     trend_type = "GAINERS" if is_winner else "LOSERS"
 
     response = await client.get(
@@ -65,9 +68,13 @@ async def get_market_trends(client: AsyncClient, is_winner=True) -> list[dict]:
     for item in data["Data"]:
         stocks.append(Stock(**item))
 
-    stocks = [asdict(stock) for stock in stocks]
+    stocks = [asdict(stock) for stock in stocks]  # type: ignore
+    end_time = time()
+    elapsed_time = end_time - start_time
 
-    return stocks
+    logger.debug(f"B3 API - Time elapsed: {elapsed_time:.2f} ms")
+
+    return stocks  # type: ignore
 
 
 if __name__ == "__main__":

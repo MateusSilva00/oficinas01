@@ -1,8 +1,11 @@
 from dataclasses import asdict, dataclass
+from time import time
 
 import httpx
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
+
+from src.logger import logger
 
 
 @dataclass
@@ -21,6 +24,7 @@ async def get_html(client: AsyncClient) -> str:
 
 
 async def get_bible_quote(client: AsyncClient) -> dict:
+    start_time = time()
     html = await get_html(client)
 
     soup = BeautifulSoup(html, "html.parser")
@@ -35,6 +39,11 @@ async def get_bible_quote(client: AsyncClient) -> dict:
     interpretation = " ".join(interpretation)
 
     bible_quote = BibleQuote(quote, book, interpretation)
+
+    end_time = time()
+    elapsed_time = end_time - start_time
+
+    logger.debug(f"Bible API - Time elapsed: {elapsed_time:.2f} ms")
 
     return asdict(bible_quote)
 

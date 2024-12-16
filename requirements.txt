@@ -1,4 +1,3 @@
-pandas
 httpx
 python-dotenv
 fastapi
@@ -11,4 +10,4 @@ python-multipart
 Pillow
 opencv-contrib-python
 adafruit-circuitpython-dht
-playsound
+playsound==1.2.2

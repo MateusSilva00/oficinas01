@@ -2,7 +2,7 @@ import os
 import shutil
 import sqlite3
 from contextlib import asynccontextmanager
-from time import sleep
+from time import time
 
 # import adafruit_dht
 # import board
@@ -73,6 +73,7 @@ async def upload_audio(file: UploadFile = File(...)):
 
 @app.get("/play-zoey-response/")
 async def play_zoey_response():
+    start_time = time()
     if not hasattr(app.state, "UserPersonalAssistant"):
         raise HTTPException(
             status_code=400, detail="UserPersonalAssistant não foi inicializada"
@@ -83,6 +84,11 @@ async def play_zoey_response():
     response = app.state.UserPersonalAssistant.get_response_message()
     logger.debug(f"Response: {response}")
     app.state.UserPersonalAssistant.get_output_audio(response)
+
+    end_time = time()
+    elapsed_time = end_time - start_time
+
+    logger.debug(f"Total time to process zoey response: {elapsed_time:.2f} ms")
 
     return {"Status": "OK", "Response": response}
 

@@ -1,6 +1,9 @@
 from datetime import date
+from time import time
 
 from httpx import AsyncClient
+
+from src.logger import logger
 
 TODAY = date.today().strftime("%d-%m-%Y")
 
@@ -33,6 +36,7 @@ def format_user_response(data: dict) -> list[dict]:
 
 
 async def get_soccer_games(client: AsyncClient) -> list[dict]:
+    start_time = time()
     response = await client.get(
         f"https://www.cnnbrasil.com.br/wp-json/cnnbr/sports/soccer/v1/matches/date/{TODAY}",
     )
@@ -40,5 +44,10 @@ async def get_soccer_games(client: AsyncClient) -> list[dict]:
     data = response.json()
 
     games = format_user_response(data)[:15]
+
+    end_time = time()
+    elapsed_time = end_time - start_time
+
+    logger.debug(f"Soccer API - Time elapsed: {elapsed_time:.2f} ms")
 
     return games
