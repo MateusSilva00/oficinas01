@@ -55,7 +55,15 @@ async function fetchTemperatureHumidiity() {
               <p>Umidade: ${data.humidity} %</p>
             `;
       } else {
-        resultDiv.innerHTML = `<p>Erro ao ler temperatura ou umidade</p>`;
+        fetch("http://127.0.0.1:8000/temperature_humidity_fallback")
+          .then((response) => response.json())
+          .then((data) => {
+            const resultDiv = document.getElementById("weather");
+            resultDiv.innerHTML = `
+            Temperatura: ${data.temperature}
+            <p>Umidade Relativa: ${data.humidity}</p>
+            `;
+          });
       }
     })
     .catch((error) => {

@@ -8,3 +8,4 @@ logs/
 /audios/
 *.jpg
 *.yml
+.mypy_cache
