@@ -478,7 +478,7 @@ async function uploadAudio(blob) {
 async function playZoeyResponse() {
   try {
     const response = await fetch("http://localhost:8000/play-zoey-response/", {
-      method: "GET",
+      method: "GET"
     });
 
     if (!response.ok) {

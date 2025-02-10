@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/MateusSilva00/oficinas01#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "http-server": "^14.1.1"
   }
 }
