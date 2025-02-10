@@ -2,7 +2,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 
-async def get_temperature_humidity():
+async def fallback_temperature_humidity():
     client = httpx.AsyncClient()
     response = await client.get(
         "https://www.simepar.br/simepar/forecast_by_counties/4106902"
@@ -25,4 +25,4 @@ async def get_temperature_humidity():
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(get_temperature_humidity())
+    asyncio.run(fallback_temperature_humidity())

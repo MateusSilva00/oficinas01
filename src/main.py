@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from services.assistant_openai import PersonalAssistant
-from services.temp_humidity_fallback import get_temperature_humidity
+from services.temp_humidity_fallback import fallback_temperature_humidity
 from src.database import get_db_connection, init_db
 from src.face_detection import face_detection, register_user_face
 from src.logger import logger
@@ -166,14 +166,14 @@ async def get_temperature_humidity():
     temperature = dht_device.temperature
     humidity = dht_device.humidity
 
-#     while temperature is None or humidity is None:
-#         temperature = dht_device.temperature
-#         humidity = dht_device.humidity
+    while temperature is None or humidity is None:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
 
     if temperature is not None and humidity is not None:
-         return {"temperature": temperature, "humidity": humidity}
+        return {"temperature": temperature, "humidity": humidity}
 
 
 @app.get("/temperature_humidity_fallback")
 async def temperature_humidity_fallback():
-    return await get_temperature_humidity()
+    return await fallback_temperature_humidity()
