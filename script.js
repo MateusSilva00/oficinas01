@@ -44,42 +44,41 @@ async function fetchHeaderData() {
 }
 
 async function fetchTemperatureHumidiity() {
-  fetch("http://127.0.0.1:8000/temperature_humidity"),
-    {
-      method: "GET",
-      mode: "cors", // Habilita CORS no lado do cliente
-      credentials: "same-origin", // Enviar cookies ou autenticações se necessário
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-      .then((response) => response.json())
-      .then((data) => {
-        const resultDiv = document.getElementById("weather");
+  fetch("http://127.0.0.1:8000/temperature_humidity", {
+    method: "GET",
+    mode: "cors", // Habilita CORS no lado do cliente
+    credentials: "same-origin", // Enviar cookies ou autenticações se necessário
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      const resultDiv = document.getElementById("weather");
 
-        if (data.temperature !== undefined && data.humidity !== undefined) {
-          resultDiv.innerHTML = `
+      if (data.temperature !== undefined && data.humidity !== undefined) {
+        resultDiv.innerHTML = `
               <p>Temperatura: ${data.temperature} °C</p>
               <p>Umidade: ${data.humidity} %</p>
             `;
-        } else {
-          fetch("http://127.0.0.1:8000/temperature_humidity_fallback")
-            .then((response) => response.json())
-            .then((data) => {
-              const resultDiv = document.getElementById("weather");
-              resultDiv.innerHTML = `
+      } else {
+        fetch("http://127.0.0.1:8000/temperature_humidity_fallback")
+          .then((response) => response.json())
+          .then((data) => {
+            const resultDiv = document.getElementById("weather");
+            resultDiv.innerHTML = `
             Temperatura: ${data.temperature}
             <p>Umidade Relativa: ${data.humidity}</p>
             `;
-            });
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao tentar obter dados:", error);
-        document.getElementById(
-          "result"
-        ).innerHTML = `<p>Erro ao se conectar ao servidor</p>`;
-      });
+          });
+      }
+    })
+    .catch((error) => {
+      console.error("Erro ao tentar obter dados:", error);
+      document.getElementById(
+        "result"
+      ).innerHTML = `<p>Erro ao se conectar ao servidor</p>`;
+    });
 }
 
 function updateClock() {
