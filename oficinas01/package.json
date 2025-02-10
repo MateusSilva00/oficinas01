@@ -1,0 +1,23 @@
+{
+  "name": "oficinas01",
+  "version": "1.0.0",
+  "description": "Funcionalidades:\r - Mostrar horas\r - Mostrar previsão do tempo\r - Criar rótinas (alarmes)\r - Assistente virtual",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MateusSilva00/oficinas01.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MateusSilva00/oficinas01/issues"
+  },
+  "homepage": "https://github.com/MateusSilva00/oficinas01#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

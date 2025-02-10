@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Página de Ação</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: black;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      background-color: white;
+      color: black;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: grey;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ação necessária</h1>
+    
+    <!-- Campo para o usuário inserir seu nome -->
+    <input type="text" id="username" placeholder="Digite seu nome de usuário" />
+    
+    <!-- Botão para cadastrar usuário -->
+    <button onclick="location.href='register.html'">Cadastrar Usuário</button>
+    
+    <!-- Botão para reconhecer face -->
+    <button onclick="recognizeFace()">Reconhecer Face</button>
+  </div>
+
+  <script>
+    function recognizeFace() {
+      const username = document.getElementById("username").value;
+
+      if (username.trim() === "") {
+        alert("Por favor, insira seu nome de usuário.");
+        return;
+      }
+      fetch("http://127.0.0.1:8000/face_detection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain"
+        },
+        body: username 
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("Reconhecimento facial realizado com sucesso!");
+          data = response.json();
+          console.log(data)
+          _id = data["User ID"];
+          window.location.href = "index.html";
+          document.getElementById("hidden-id").textContent = _id;
+        } else {
+          alert("Erro no reconhecimento facial.");
+        }
+      })
+      .catch(error => console.error("Erro ao tentar reconhecer face:", error));
+    }
+  </script>
+</body>
+</html>

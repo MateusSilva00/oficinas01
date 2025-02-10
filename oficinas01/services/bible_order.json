@@ -1,0 +1,266 @@
+{
+    "1": {
+        "Nome": "Gênesis",
+        "Abreviação": "Gn"
+    },
+    "2": {
+        "Nome": "Êxodo",
+        "Abreviação": "Êx"
+    },
+    "3": {
+        "Nome": "Levítico",
+        "Abreviação": "Lv"
+    },
+    "4": {
+        "Nome": "Números",
+        "Abreviação": "Nm"
+    },
+    "5": {
+        "Nome": "Deuteronômio",
+        "Abreviação": "Dt"
+    },
+    "6": {
+        "Nome": "Josué",
+        "Abreviação": "Js"
+    },
+    "7": {
+        "Nome": "Juízes",
+        "Abreviação": "Jz"
+    },
+    "8": {
+        "Nome": "Rute",
+        "Abreviação": "Rt"
+    },
+    "9": {
+        "Nome": "1 Samuel",
+        "Abreviação": "1Sm"
+    },
+    "10": {
+        "Nome": "2 Samuel",
+        "Abreviação": "2Sm"
+    },
+    "11": {
+        "Nome": "1 Reis",
+        "Abreviação": "1Rs"
+    },
+    "12": {
+        "Nome": "2 Reis",
+        "Abreviação": "2Rs"
+    },
+    "13": {
+        "Nome": "1 Crônicas",
+        "Abreviação": "1Cr"
+    },
+    "14": {
+        "Nome": "2 Crônicas",
+        "Abreviação": "2Cr"
+    },
+    "15": {
+        "Nome": "Esdras",
+        "Abreviação": "Ed"
+    },
+    "16": {
+        "Nome": "Neemias",
+        "Abreviação": "Ne"
+    },
+    "17": {
+        "Nome": "Ester",
+        "Abreviação": "Et"
+    },
+    "18": {
+        "Nome": "Jó",
+        "Abreviação": "Jó"
+    },
+    "19": {
+        "Nome": "Salmos",
+        "Abreviação": "Sl"
+    },
+    "20": {
+        "Nome": "Provérbios",
+        "Abreviação": "Pv"
+    },
+    "21": {
+        "Nome": "Eclesiastes",
+        "Abreviação": "Ec"
+    },
+    "22": {
+        "Nome": "Cantares",
+        "Abreviação": "Ct"
+    },
+    "23": {
+        "Nome": "Isaías",
+        "Abreviação": "Is"
+    },
+    "24": {
+        "Nome": "Jeremias",
+        "Abreviação": "Jr"
+    },
+    "25": {
+        "Nome": "Lamentações",
+        "Abreviação": "Lm"
+    },
+    "26": {
+        "Nome": "Ezequiel",
+        "Abreviação": "Ez"
+    },
+    "27": {
+        "Nome": "Daniel",
+        "Abreviação": "Dn"
+    },
+    "28": {
+        "Nome": "Oseias",
+        "Abreviação": "Os"
+    },
+    "29": {
+        "Nome": "Joel",
+        "Abreviação": "Jl"
+    },
+    "30": {
+        "Nome": "Amós",
+        "Abreviação": "Am"
+    },
+    "31": {
+        "Nome": "Obadias",
+        "Abreviação": "Ob"
+    },
+    "32": {
+        "Nome": "Jonas",
+        "Abreviação": "Jn"
+    },
+    "33": {
+        "Nome": "Miqueias",
+        "Abreviação": "Mq"
+    },
+    "34": {
+        "Nome": "Naum",
+        "Abreviação": "Na"
+    },
+    "35": {
+        "Nome": "Habacuque",
+        "Abreviação": "Hc"
+    },
+    "36": {
+        "Nome": "Sofonias",
+        "Abreviação": "Sf"
+    },
+    "37": {
+        "Nome": "Ageu",
+        "Abreviação": "Ag"
+    },
+    "38": {
+        "Nome": "Zacarias",
+        "Abreviação": "Zc"
+    },
+    "39": {
+        "Nome": "Malaquias",
+        "Abreviação": "Ml"
+    },
+    "40": {
+        "Nome": "Mateus",
+        "Abreviação": "Mt"
+    },
+    "41": {
+        "Nome": "Marcos",
+        "Abreviação": "Mc"
+    },
+    "42": {
+        "Nome": "Lucas",
+        "Abreviação": "Lc"
+    },
+    "43": {
+        "Nome": "João",
+        "Abreviação": "Jo"
+    },
+    "44": {
+        "Nome": "Atos",
+        "Abreviação": "At"
+    },
+    "45": {
+        "Nome": "Romanos",
+        "Abreviação": "Rm"
+    },
+    "46": {
+        "Nome": "1 Coríntios",
+        "Abreviação": "1Co"
+    },
+    "47": {
+        "Nome": "2 Coríntios",
+        "Abreviação": "2Co"
+    },
+    "48": {
+        "Nome": "Gálatas",
+        "Abreviação": "Gl"
+    },
+    "49": {
+        "Nome": "Efésios",
+        "Abreviação": "Ef"
+    },
+    "50": {
+        "Nome": "Filipenses",
+        "Abreviação": "Fp"
+    },
+    "51": {
+        "Nome": "Colossenses",
+        "Abreviação": "Cl"
+    },
+    "52": {
+        "Nome": "1 Tessalonicenses",
+        "Abreviação": "1Ts"
+    },
+    "53": {
+        "Nome": "2 Tessalonicenses",
+        "Abreviação": "2Ts"
+    },
+    "54": {
+        "Nome": "1 Timóteo",
+        "Abreviação": "1Tm"
+    },
+    "55": {
+        "Nome": "2 Timóteo",
+        "Abreviação": "2Tm"
+    },
+    "56": {
+        "Nome": "Tito",
+        "Abreviação": "Tt"
+    },
+    "57": {
+        "Nome": "Filemom",
+        "Abreviação": "Fm"
+    },
+    "58": {
+        "Nome": "Hebreus",
+        "Abreviação": "Hb"
+    },
+    "59": {
+        "Nome": "Tiago",
+        "Abreviação": "Tg"
+    },
+    "60": {
+        "Nome": "1 Pedro",
+        "Abreviação": "1Pe"
+    },
+    "61": {
+        "Nome": "2 Pedro",
+        "Abreviação": "2Pe"
+    },
+    "62": {
+        "Nome": "1 João",
+        "Abreviação": "1Jo"
+    },
+    "63": {
+        "Nome": "2 João",
+        "Abreviação": "2Jo"
+    },
+    "64": {
+        "Nome": "3 João",
+        "Abreviação": "3Jo"
+    },
+    "65": {
+        "Nome": "Judas",
+        "Abreviação": "Jd"
+    },
+    "66": {
+        "Nome": "Apocalipse",
+        "Abreviação": "Ap"
+    }
+}
