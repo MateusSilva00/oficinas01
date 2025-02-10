@@ -32,7 +32,7 @@ async def get_bible_quote(client: AsyncClient) -> dict:
     article = soup.find("div", {"class": "articlebody"})
 
     quote = article.find("blockquote").text.replace("\n", " ").strip()
-    quote, book = quote.split(" - ", maxsplit=1)
+    quote, book = quote.split("-", maxsplit=1)
 
     interpretation = article.find("blockquote").find_next_siblings("p")[:-1]
     interpretation = [p.text.replace("\n", " ").strip() for p in interpretation]
