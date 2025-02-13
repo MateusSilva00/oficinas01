@@ -7,8 +7,10 @@ from time import time
 import adafruit_dht
 import board
 from fastapi import Body, FastAPI, File, HTTPException, UploadFile
+#from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+#from pathlib import Path
 
 from services.assistant_openai import PersonalAssistant
 from services.temp_humidity_fallback import fallback_temperature_humidity
@@ -41,6 +43,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+#static_path = Path(__file__).parent.parent / "static"
+
+#app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
 
 user_service = UserService()
 
@@ -161,17 +167,40 @@ def user_face_detection(username: str = Body(..., media_type="text/plain")):
 
 @app.get("/temperature_humidity")
 async def get_temperature_humidity():
-    dht_device = adafruit_dht.DHT11(board.D4)
+    dhtDevice = adafruit_dht.DHT11(board.D4)
 
-    temperature = dht_device.temperature
-    humidity = dht_device.humidity
+    try:
+        # Get the temperature and humidity values
+        temperature_c = dhtDevice.temperature
+        temperature_f = temperature_c * (9 / 5) + 32
+        humidity = dhtDevice.humidity
 
-    while temperature is None or humidity is None:
-        temperature = dht_device.temperature
-        humidity = dht_device.humidity
+        # Return the temperature and humidity data
+        return {"temperature": temperature_c, "humidity": humidity}
 
-    if temperature is not None and humidity is not None:
-        return {"temperature": temperature, "humidity": humidity}
+    except RuntimeError as error:
+        # Handle runtime error (e.g., sensor failure)
+        print(f"Error: {error.args[0]}")
+        return None
+    except Exception as error:
+        # Handle other exceptions
+        dhtDevice.exit()
+        raise error
+      
+        # Wait before the next reading
+      
+    #dht_device = adafruit_dht.DHT11(board.D4)
+
+    #temperature = dht_device.temperature
+    #humidity = dht_device.humidity
+
+    #while temperature is None or humidity is None:
+     #   temperature = dht_device.temperature
+      #  humidity = dht_device.humidity
+
+    #if temperature is not None and humidity is not None:
+        #return {"temperature": temperature, "humidity": humidity}
+    #return {"temperature": 3, "humidity": 5}
 
 
 @app.get("/temperature_humidity_fallback")

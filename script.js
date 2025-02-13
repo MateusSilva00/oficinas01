@@ -44,7 +44,7 @@ async function fetchHeaderData() {
 async function fetchTemperatureHumidiity() {
   const resultDiv = document.getElementById("weather");
   try {
-    const response = await fetch("http://127.0.0.1:8000/temperature_humidity", {
+    const response = await fetch("http://localhost:8000/temperature_humidity", {
       headers: {
         accept: "application/json",
       },
@@ -60,7 +60,7 @@ async function fetchTemperatureHumidiity() {
     `;
   } catch (error) {
     const response = await fetch(
-      "http://127.0.0.1:8000/temperature_humidity_fallback",
+      "http://localhost:8000/temperature_humidity_fallback",
       {
         headers: {
           accept: "application/json",
@@ -91,7 +91,7 @@ function updateClock() {
 
 async function fetchWidgetsData() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/users/1", {
+    const response = await fetch("http://localhost:8000/users/1", {
       headers: {
         accept: "application/json",
       },
@@ -460,6 +460,9 @@ async function uploadAudio(blob) {
     const response = await fetch("http://localhost:8000/upload-audio/", {
       method: "POST",
       body: formData,
+      headers: {
+        accept: "application/json",
+      },
     });
 
     if (!response.ok) {
@@ -481,8 +484,11 @@ async function uploadAudio(blob) {
 
 async function playZoeyResponse() {
   try {
-    const response = await fetch("http://localhost:8000/play-zoey-response/", {
+    const response = await fetch("http://localhost:8000/play-zoey-response/", {	
       method: "GET",
+      headers: {
+        accept: "application/json",
+      },
     });
 
     if (!response.ok) {
