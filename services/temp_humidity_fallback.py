@@ -19,9 +19,6 @@ async def fallback_temperature_humidity():
         .text
     ).strip()
 
-    temp: str = temp.replace("°C", "", 1)
-    humidity: str = humidity.replace("%", "", 1)
-
     return {"temperature": temp, "humidity": humidity}
 
 

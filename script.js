@@ -73,8 +73,8 @@ async function fetchTemperatureHumidiity() {
     const data = await response.json();
 
     resultDiv.innerHTML = `
-      <p>Temperatura: ${data.temperature} °C</p>
-      <p>Umidade: ${data.humidity} %</p>
+      <p>Temperatura: ${data.temperature}</p>
+      <p>Umidade: ${data.humidity}</p>
     `;
   }
 }
@@ -484,7 +484,7 @@ async function uploadAudio(blob) {
 
 async function playZoeyResponse() {
   try {
-    const response = await fetch("http://localhost:8000/play-zoey-response/", {	
+    const response = await fetch("http://localhost:8000/play-zoey-response/", {
       method: "GET",
       headers: {
         accept: "application/json",

@@ -7,10 +7,10 @@ from time import time
 import adafruit_dht
 import board
 from fastapi import Body, FastAPI, File, HTTPException, UploadFile
-#from fastapi.staticfiles import StaticFiles
+
+# from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-#from pathlib import Path
 
 from services.assistant_openai import PersonalAssistant
 from services.temp_humidity_fallback import fallback_temperature_humidity
@@ -18,6 +18,9 @@ from src.database import get_db_connection, init_db
 from src.face_detection import face_detection, register_user_face
 from src.logger import logger
 from src.user_service import UserService
+
+# from pathlib import Path
+
 
 global UserPersonalAssistant
 
@@ -44,9 +47,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#static_path = Path(__file__).parent.parent / "static"
+# static_path = Path(__file__).parent.parent / "static"
 
-#app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
+# app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
 
 user_service = UserService()
 
@@ -167,40 +170,27 @@ def user_face_detection(username: str = Body(..., media_type="text/plain")):
 
 @app.get("/temperature_humidity")
 async def get_temperature_humidity():
-    dhtDevice = adafruit_dht.DHT11(board.D4)
+    dhtDevice = adafruit_dht.DHT11(board.D4, use_pulseio=True)
 
-    try:
-        # Get the temperature and humidity values
-        temperature_c = dhtDevice.temperature
-        temperature_f = temperature_c * (9 / 5) + 32
-        humidity = dhtDevice.humidity
+    sucess = False
+    remaing_attempts = 3
 
-        # Return the temperature and humidity data
-        return {"temperature": temperature_c, "humidity": humidity}
+    while not sucess and remaing_attempts > 0:
+        try:
+            temperature_c = dhtDevice.temperature
+            humidity = dhtDevice.humidity
+            sucess = True
 
-    except RuntimeError as error:
-        # Handle runtime error (e.g., sensor failure)
-        print(f"Error: {error.args[0]}")
-        return None
-    except Exception as error:
-        # Handle other exceptions
-        dhtDevice.exit()
-        raise error
-      
-        # Wait before the next reading
-      
-    #dht_device = adafruit_dht.DHT11(board.D4)
+        except RuntimeError as error:
+            remaing_attempts -= 1
+            print(f"Error: {error.args[0]}")
+            dhtDevice.exit()
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error: {error.args[0]}, remaining attempts: {remaing_attempts}",
+            )
 
-    #temperature = dht_device.temperature
-    #humidity = dht_device.humidity
-
-    #while temperature is None or humidity is None:
-     #   temperature = dht_device.temperature
-      #  humidity = dht_device.humidity
-
-    #if temperature is not None and humidity is not None:
-        #return {"temperature": temperature, "humidity": humidity}
-    #return {"temperature": 3, "humidity": 5}
+    return {"temperature": temperature_c, "humidity": humidity}
 
 
 @app.get("/temperature_humidity_fallback")
