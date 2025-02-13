@@ -170,27 +170,25 @@ def user_face_detection(username: str = Body(..., media_type="text/plain")):
 
 @app.get("/temperature_humidity")
 async def get_temperature_humidity():
-    dhtDevice = adafruit_dht.DHT11(board.D4, use_pulseio=True)
-
-    sucess = False
     remaing_attempts = 3
 
-    while not sucess and remaing_attempts > 0:
+    while remaing_attempts > 0:
+
+        dhtDevice = adafruit_dht.DHT11(board.D4, use_pulseio=True)
         try:
             temperature_c = dhtDevice.temperature
             humidity = dhtDevice.humidity
-            sucess = True
+            return {"temperature": temperature_c, "humidity": humidity}
 
         except RuntimeError as error:
             remaing_attempts -= 1
             print(f"Error: {error.args[0]}")
             dhtDevice.exit()
-            raise HTTPException(
-                status_code=500,
-                detail=f"Error: {error.args[0]}, remaining attempts: {remaing_attempts}",
-            )
 
-    return {"temperature": temperature_c, "humidity": humidity}
+    raise HTTPException(
+        status_code=500,
+        detail=f"Error: {error.args[0]}, remaining attempts: {remaing_attempts}",
+    )
 
 
 @app.get("/temperature_humidity_fallback")
