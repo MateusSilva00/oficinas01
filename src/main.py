@@ -180,9 +180,9 @@ async def get_temperature_humidity():
             humidity = dhtDevice.humidity
             return {"temperature": temperature_c, "humidity": humidity}
 
-        except RuntimeError as error:
+        except Exception as error:
             remaing_attempts -= 1
-            print(f"Error: {error.args[0]}")
+            print(f"Error: {error}, remaining attempts: {remaing_attempts}")
             dhtDevice.exit()
 
     raise HTTPException(
