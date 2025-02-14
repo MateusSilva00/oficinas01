@@ -91,7 +91,7 @@ function updateClock() {
 
 async function fetchWidgetsData() {
   try {
-    const response = await fetch("http://localhost:8000/users/1", {
+    const response = await fetch("http://localhost:8000/users/0", {
       headers: {
         accept: "application/json",
       },
