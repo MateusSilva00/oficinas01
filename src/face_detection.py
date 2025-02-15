@@ -6,6 +6,8 @@ from tkinter import messagebox
 import cv2
 import numpy as np
 from PIL import Image
+from picamera2 import Picamera2
+from picamera2 import Picamera2
 
 from src.logger import logger
 
@@ -109,79 +111,70 @@ def face_detection(username: str):
 
 
 def register_user_face(username):
-    SAMPLE = 20
+    SAMPLE = 10
     font = cv2.FONT_HERSHEY_SIMPLEX
 
-    cam = cv2.VideoCapture(0)
-    cam.set(3, 640)
-    cam.set(4, 480)
+    picam2 = Picamera2()
+    config = picam2.create_preview_configuration(main={"size": (640, 480), "format": "XRGB8888"})
+    picam2.configure(config)
+    picam2.start()
 
-    detector = cv2.CascadeClassifier(
-        cv2.data.haarcascades + "haarcascade_frontalface_alt.xml"
-    )
+    detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_alt.xml")
 
     logger.debug(f"Iniciando cadastro do usuário: {username}")
 
     count = 0
-    face_id = random.randint(1, 1000)  # Gerar um ID para o usuário uma vez
+    face_id = random.randint(1, 1000)
+    window_name = "Cadastrando usuário"
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
-    cv2.namedWindow("Cadastrando usuário")
+    # Centralizar a janela na tela 1024x768
+    screen_width = 1024
+    screen_height = 768
+    window_x = (screen_width - 640) // 2
+    window_y = (screen_height - 480) // 2
+    cv2.moveWindow(window_name, window_x, window_y)
 
-    while True:
-        ret, img = cam.read()
+    while count < SAMPLE:
+        frame = picam2.capture_array()
+        img = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)  # Remove canal alfa e ajusta cores
 
-        if not ret:
-            logger.error("Falha na captura do vídeo.")
-            break
+        img = cv2.flip(img, 1)  # Espelhamento horizontal
 
-        img = cv2.flip(img, 1)
-        converted_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        converted_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # Para detecção de rosto
         faces = detector.detectMultiScale(converted_image, 1.3, 5)
 
-        cv2.putText(
-            img, f"Amostras capturadas: {count}", (10, 20), font, 1, (244, 244, 244), 1
-        )
+        cv2.putText(img, f"Amostras capturadas: {count}", (10, 20), font, 1, (244, 244, 244), 1)
 
         for x, y, w, h in faces:
             count += 1
-            logger.debug(
-                f"Total de amostras capturadas para {username}: {count}/{SAMPLE}"
-            )
+            logger.debug(f"Total de amostras capturadas para {username}: {count}/{SAMPLE}")
 
             cv2.imwrite(
                 f"user_data/face_{username}_{face_id}_{count}.jpg",
-                converted_image[y : y + h, x : x + w],
+                converted_image[y:y+h, x:x+w]
             )
 
-            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
             if count >= SAMPLE:
                 break
 
-        cv2.imshow("Cadastrando usuário", img)
-
+        cv2.imshow(window_name, img)
         time.sleep(0.5)
 
-        if count >= SAMPLE:
-            break
-
-        # Pressionar 'q' para sair manualmente
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
-    cam.release()
-    cv2.destroyAllWindows()  # Fechar todas as janelas
+    picam2.stop()
+    cv2.destroyAllWindows()
 
-    logger.debug(
-        f"Cadastro do usuário {username} concluído com {count} amostras capturadas."
-    )
-
-    # Mensagem de cadastro concluído
+    logger.debug(f"Cadastro do usuário {username} concluído com {count} amostras capturadas.")
     messagebox.showinfo("Cadastro", f"Usuário {username} cadastrado com sucesso!")
+
     train_data()
-
-
-# Função para treinar os dados
+    
+    
 def train_data():
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     detector = cv2.CascadeClassifier(
@@ -220,5 +213,5 @@ def train_data():
 
 
 if __name__ == "__main__":
-    # register_user_face("will")
-    face_detection("will")
+    register_user_face("will")
+    #face_detection("will")
