@@ -1,7 +1,6 @@
 import os
 import random
 import time
-import tkinter as tk
 from tkinter import messagebox
 
 import cv2
@@ -24,7 +23,7 @@ def face_detection(username: str):
     if not cam.isOpened():
         logger.debug("Erro ao abrir a câmera para reconhecimento.")
         print("Erro ao abrir a câmera")
-        return
+        return False
 
     cam.set(3, 640)
     cam.set(4, 480)
@@ -34,6 +33,9 @@ def face_detection(username: str):
     user_recognized = False
 
     logger.debug(f"Iniciando reconhecimento facial para {username}")
+
+    start_time = time.time()  # Registro do tempo inicial
+    MAX_TIME = 35
 
     while True:
         ret, img = cam.read()
@@ -68,7 +70,7 @@ def face_detection(username: str):
                     )
                     cam.release()
                     cv2.destroyAllWindows()
-                    return
+                    return True
             else:
                 accuracy_value = round(100 - accuracy)
 
@@ -88,8 +90,22 @@ def face_detection(username: str):
             logger.debug("Reconhecimento facial encerrado pelo usuário.")
             break
 
+        elapsed_time = time.time() - start_time
+        if elapsed_time > MAX_TIME:
+            logger.debug(
+                f"Tempo limite de {MAX_TIME} segundos atingido. Usuário não encontrado."
+            )
+            messagebox.showwarning(
+                "Reconhecimento",
+                f"Usuário {username} não encontrado em {MAX_TIME} segundos.",
+            )
+            cam.release()
+            cv2.destroyAllWindows()
+            return False
+
     cam.release()
     cv2.destroyAllWindows()
+    return False
 
 
 def register_user_face(username):
