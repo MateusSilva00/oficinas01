@@ -12,11 +12,10 @@ from src.logger import logger
 
 
 def face_detection(username: str):
+    # recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read("trained_data.yml")
-    faceCascade = cv2.CascadeClassifier(
-        cv2.data.haarcascades + "haarcascade_frontalface_alt.xml"
-    )
+    faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     names = ["", username]
@@ -108,6 +107,10 @@ def register_user_face(username):
     logger.debug(f"Iniciando cadastro do usuário: {username}")
 
     count = 0
+    face_id = random.randint(1, 1000)  # Gerar um ID para o usuário uma vez
+
+    cv2.namedWindow("Cadastrando usuário")
+
     while True:
         ret, img = cam.read()
 
@@ -118,51 +121,48 @@ def register_user_face(username):
         img = cv2.flip(img, 1)
         converted_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = detector.detectMultiScale(converted_image, 1.3, 5)
-        time.sleep(0.8)
 
         cv2.putText(
-            img,
-            f"Amostras capturadas: {count}",
-            (10, 20),
-            font,
-            1,
-            (244, 244, 244),
-            1,
+            img, f"Amostras capturadas: {count}", (10, 20), font, 1, (244, 244, 244), 1
         )
-
-        face_id = random.randint(1, 1000)
 
         for x, y, w, h in faces:
             count += 1
             logger.debug(
                 f"Total de amostras capturadas para {username}: {count}/{SAMPLE}"
             )
+
             cv2.imwrite(
                 f"user_data/face_{username}_{face_id}_{count}.jpg",
                 converted_image[y : y + h, x : x + w],
             )
+
+            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
             if count >= SAMPLE:
                 break
 
         cv2.imshow("Cadastrando usuário", img)
 
+        time.sleep(0.5)
+
         if count >= SAMPLE:
             break
 
+        # Pressionar 'q' para sair manualmente
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
     cam.release()
-    cv2.destroyAllWindows()
+    cv2.destroyAllWindows()  # Fechar todas as janelas
 
     logger.debug(
         f"Cadastro do usuário {username} concluído com {count} amostras capturadas."
     )
 
+    # Mensagem de cadastro concluído
     messagebox.showinfo("Cadastro", f"Usuário {username} cadastrado com sucesso!")
-
     train_data()
-    # face_detection(name)
 
 
 # Função para treinar os dados
@@ -182,7 +182,7 @@ def train_data():
         for imagePath in imagesPaths:
             gray_image = Image.open(imagePath).convert("L")
             img_arr = np.array(gray_image, "uint8")
-            _id = int(os.path.split(imagePath)[-1].rsplit("_")[2])
+            _id = int(os.path.split(imagePath)[-1].split("_")[-2])
             faces = detector.detectMultiScale(img_arr)
 
             for x, y, w, h in faces:
@@ -203,79 +203,6 @@ def train_data():
     logger.debug("Treinamento concluído e dados salvos.")
 
 
-def open_registration_screen():
-    for widget in root.winfo_children():
-        widget.destroy()
-
-    tk.Label(
-        root,
-        text="Cadastro de Novo Usuário",
-        font=("Arial", 16),
-        fg="#80deea",
-        bg="#212121",
-    ).pack(pady=20)
-
-    global name_entry, id_entry
-    tk.Label(root, text="Nome:", bg="#212121", fg="#ffffff").pack(pady=5)
-    name_entry = tk.Entry(root, bg="#37474f", fg="#ffffff")
-    name_entry.pack(pady=5)
-
-    tk.Label(root, text="ID:", bg="#212121", fg="#ffffff").pack(pady=5)
-    id_entry = tk.Entry(root, bg="#37474f", fg="#ffffff")
-    id_entry.pack(pady=5)
-
-    tk.Button(
-        root, text="Cadastrar", command=register_user_face, bg="#00796b", fg="#ffffff"
-    ).pack(pady=20)
-
-
-# Função para a tela inicial
-def open_initial_screen():
-    for widget in root.winfo_children():
-        widget.destroy()
-
-    tk.Label(
-        root,
-        text="Sistema de Reconhecimento Facial",
-        font=("Arial", 16),
-        fg="#80deea",
-        bg="#212121",
-    ).pack(pady=50)
-
-    tk.Button(
-        root,
-        text="Reconhecimento Facial",
-        command=lambda: face_detection("Desconhecido"),
-        width=25,
-        height=2,
-        bg="#00796b",
-        fg="#ffffff",
-    ).pack(pady=20)
-    tk.Button(
-        root,
-        text="Cadastrar Novo Usuário",
-        command=open_registration_screen,
-        width=25,
-        height=2,
-        bg="#00796b",
-        fg="#ffffff",
-    ).pack(pady=20)
-
-
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Face Recognition System")
-    root.geometry("400x600")
-    root.configure(bg="#212121")
-
-    window_width = 400
-    window_height = 600
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    position_top = int(screen_height / 2 - window_height / 2)
-    position_right = int(screen_width / 2 - window_width / 2)
-    root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
-
-    open_initial_screen()
-
-    root.mainloop()
+    # register_user_face("will")
+    face_detection("will")
