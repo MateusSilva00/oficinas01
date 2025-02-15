@@ -13,99 +13,66 @@ from src.logger import logger
 
 
 def face_detection(username: str):
-    # recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read("trained_data.yml")
     faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     names = ["", username]
-    cam = cv2.VideoCapture(0)
-
-    if not cam.isOpened():
-        logger.debug("Erro ao abrir a câmera para reconhecimento.")
-        print("Erro ao abrir a câmera")
-        return False
-
-    cam.set(3, 640)
-    cam.set(4, 480)
-    minW = 0.1 * cam.get(3)
-    minH = 0.1 * cam.get(4)
-
+    picam2 = Picamera2()
+    config = picam2.create_preview_configuration(main={"size": (640, 480)})
+    picam2.configure(config)
+    picam2.start()
+    
     user_recognized = False
-
     logger.debug(f"Iniciando reconhecimento facial para {username}")
-
-    start_time = time.time()  # Registro do tempo inicial
+    
+    start_time = time.time()
     MAX_TIME = 35
-
+    
     while True:
-        ret, img = cam.read()
-        img = cv2.flip(img, 1)
-        if not ret:
-            logger.debug("Falha ao capturar imagem durante reconhecimento.")
-            print("Falha ao capturar imagem.")
-            continue
-
+        frame = picam2.capture_array()
+        img = cv2.flip(frame, 1)
         converted_image = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
+        
         faces = faceCascade.detectMultiScale(
-            converted_image,
-            scaleFactor=1.2,
-            minNeighbors=5,
-            minSize=(int(minW), int(minH)),
+            converted_image, scaleFactor=1.2, minNeighbors=5, minSize=(30, 30)
         )
-
+        
         for x, y, w, h in faces:
             cv2.rectangle(img, (x, y), (x + w, y + h), (128, 203, 196), 2)
-            _id, accuracy = recognizer.predict(converted_image[y : y + h, x : x + w])
-
+            _id, accuracy = recognizer.predict(converted_image[y:y+h, x:x+w])
+            
             if accuracy < 100:
                 accuracy_value = round(100 - accuracy)
-                logger.debug(
-                    f"Usuário {username} reconhecido com acurácia de {accuracy_value}%"
-                )
+                logger.debug(f"Usuário {username} reconhecido com acurácia de {accuracy_value}%")
                 if accuracy_value >= 60 and not user_recognized:
                     user_recognized = True
-                    messagebox.showinfo(
-                        "Reconhecimento", f"Usuário {username} reconhecido com sucesso!"
-                    )
-                    cam.release()
+                    messagebox.showinfo("Reconhecimento", f"Usuário {username} reconhecido com sucesso!")
+                    picam2.stop()
+                    time.sleep(1.5)
                     cv2.destroyAllWindows()
                     return True
             else:
                 accuracy_value = round(100 - accuracy)
-
-            cv2.putText(
-                img,
-                f"{username} - {accuracy_value}%",
-                (x + 5, y - 5),
-                font,
-                1,
-                (244, 244, 244),
-                1,
-            )
-
+            
+            cv2.putText(img, f"{username} - {accuracy_value}%", (x + 5, y - 5), font, 1, (244, 244, 244), 1)
+        
         cv2.imshow("Reconhecimento Facial", img)
         k = cv2.waitKey(10) & 0xFF
         if k == 27:
             logger.debug("Reconhecimento facial encerrado pelo usuário.")
             break
-
+        
         elapsed_time = time.time() - start_time
         if elapsed_time > MAX_TIME:
-            logger.debug(
-                f"Tempo limite de {MAX_TIME} segundos atingido. Usuário não encontrado."
-            )
-            messagebox.showwarning(
-                "Reconhecimento",
-                f"Usuário {username} não encontrado em {MAX_TIME} segundos.",
-            )
-            cam.release()
+            logger.debug(f"Tempo limite de {MAX_TIME} segundos atingido. Usuário não encontrado.")
+            messagebox.showwarning("Reconhecimento", f"Usuário {username} não encontrado em {MAX_TIME} segundos.")
+            picam2.stop()
             cv2.destroyAllWindows()
             return False
-
-    cam.release()
+    
+    picam2.stop()
     cv2.destroyAllWindows()
     return False
 
@@ -213,5 +180,5 @@ def train_data():
 
 
 if __name__ == "__main__":
-    register_user_face("will")
-    #face_detection("will")
+    #register_user_face("will")
+    face_detection("teteus")
