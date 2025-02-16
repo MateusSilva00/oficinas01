@@ -28,7 +28,7 @@ Se a pessoa falar algo que vocé não entende, responda "Desculpe, eu não enten
 """
 
 MODEL = "gpt-4o-mini"
-ZOEY_SPEECH_FILE_PATH = "audios/output.mp3"
+ZOEY_SPEECH_FILE_PATH = "audios//output.mp3"
 
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -151,8 +151,5 @@ class PersonalAssistant:
 
 
 if __name__ == "__main__":
-    assistant = PersonalAssistant(username="Ananda Martins")
-    # assistant.input_message("O que devo comer agora de noite?")
-    # response = assistant.get_response_message()
-    # assistant.get_output_audio(response)
-    # assistant.input_audio_to_text()
+    assistant = PersonalAssistant(username="Juliano Mourao")
+    assistant.get_output_audio(message="Qual foi o melhor jogador do mundo em 2010")
