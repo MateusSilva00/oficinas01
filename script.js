@@ -91,7 +91,7 @@ function updateClock() {
 
 async function fetchWidgetsData() {
   try {
-    const response = await fetch("http://localhost:8000/users/0", {
+    const response = await fetch("http://localhost:8000/users/1", {
       headers: {
         accept: "application/json",
       },
@@ -502,9 +502,50 @@ async function playZoeyResponse() {
   }
 }
 
+async function screen_on() {
+    try {
+        const response = await fetch('http://localhost:8000/motion', {
+            method: "GET",
+            headers: {
+                accept: "application/json",
+            },
+        });
+
+        const motionDetected = await response.json();
+        console.log(motionDetected);
+
+        let overlay = document.getElementById('overlay');
+
+        if (!motionDetected) {
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'black';
+                overlay.style.zIndex = '9999'; // Camada superior
+                document.body.appendChild(overlay);
+            } else {
+                overlay.style.display = 'block';
+            }
+        } else if (overlay) {
+            overlay.style.display = 'none';
+        }
+
+    } catch (error) {
+        console.error('Erro ao chamar a API:', error);
+    }
+    setTimeout(screen_on, 1000);
+}
+
+
 window.onload = function () {
   fetchHeaderData();
   fetchWidgetsData();
   initializeZoey();
   fetchTemperatureHumidiity();
+  screen_on();
 };

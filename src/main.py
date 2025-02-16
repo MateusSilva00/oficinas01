@@ -3,6 +3,8 @@ import shutil
 import sqlite3
 from contextlib import asynccontextmanager
 from time import time
+import RPi.GPIO as GPIO
+
 
 import adafruit_dht
 import board
@@ -187,6 +189,17 @@ async def get_temperature_humidity():
 		except Exception as error:
 			print("Error:", error)
 			dhtDevice.exit()
+			
+@app.get("/motion")
+async def motion() -> bool:
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setwarnings(False)
+	PIR_PIN = 17
+	GPIO.setup(PIR_PIN, GPIO.IN)
+	
+	logger.debug(f"Sensor de presença:  {GPIO.input(PIR_PIN)}")
+
+	return GPIO.input(PIR_PIN)
 
 
 

@@ -7,12 +7,11 @@ import cv2
 import numpy as np
 from PIL import Image
 from picamera2 import Picamera2
-from picamera2 import Picamera2
 
 from src.logger import logger
 
 
-def face_detection(username: str):
+def face_detection(username: str):	
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read("trained_data.yml")
     faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
@@ -80,7 +79,7 @@ def face_detection(username: str):
 def register_user_face(username):
     SAMPLE = 10
     font = cv2.FONT_HERSHEY_SIMPLEX
-
+	
     picam2 = Picamera2()
     config = picam2.create_preview_configuration(main={"size": (640, 480), "format": "XRGB8888"})
     picam2.configure(config)
@@ -180,5 +179,5 @@ def train_data():
 
 
 if __name__ == "__main__":
-    #register_user_face("will")
-    face_detection("teteus")
+    register_user_face("will")
+    #face_detection("teteus")
