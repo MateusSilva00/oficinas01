@@ -10,3 +10,4 @@ logs/
 *.jpg
 *.yml
 .mypy_cache
+!SmartMirrorPic.jpg
