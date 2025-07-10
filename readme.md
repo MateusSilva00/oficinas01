@@ -1,109 +1,115 @@
-# Espelho Inteligente com Assistente Virtual e Reconhecimento Facial
+# Smart Mirror with Virtual Assistant and Facial Recognition
 
-Projeto acadêmico desenvolvido na Universidade Tecnológica Federal do Paraná (UTFPR) para a disciplina de **Oficinas de Integração 1**, com o objetivo de integrar hardware e software em um dispositivo de uso cotidiano, elevando a experiência de um espelho tradicional por meio de tecnologias de **IoT**, **Inteligência Artificial**, **Reconhecimento Facial** e **Comando de Voz**.
-
----
-
-## Funcionalidades
-
-- Assistente virtual personalizada (Zoey) com integração via API da OpenAI.
-- Interação por comando de voz com transcrição automática.
-- Reconhecimento facial para autenticação e interface personalizada.
-- Exibição de informações em tempo real: data, hora, clima, notícias, ações, placares esportivos e versículos bíblicos.
-- Ativação automática da interface por sensor de movimento (HC-SR501).
-- Leitura de temperatura e umidade com sensor DHT11.
+Academic project developed at the Federal University of Technology - Paraná (UTFPR) for the **Integration Workshop 1** course, with the objective of integrating hardware and software in an everyday device, enhancing the experience of a traditional mirror through **IoT**, **Artificial Intelligence**, **Facial Recognition** and **Voice Command** technologies.
 
 ---
 
-## Tecnologias Utilizadas
+## Features
+
+- Personalized virtual assistant (Zoey) with OpenAI API integration.
+- Voice command interaction with automatic transcription.
+- Facial recognition for authentication and personalized interface.
+- Real-time information display: date, time, weather, news, stocks, sports scores and bible verses.
+- Automatic interface activation by motion sensor (HC-SR501).
+- Temperature and humidity reading with DHT11 sensor.
+
+---
+
+## Technologies Used
 
 ### **Hardware**
 - Raspberry Pi 3B+
-- Sensor de movimento HC-SR501
-- Sensor de temperatura e umidade DHT11
-- Câmera (para reconhecimento facial)
-- Microfone (para entrada de voz)
-- Monitor LCD + vidro com insulfilm (espelho bidirecional improvisado)
-- Moldura touch
+- Motion sensor HC-SR501
+- Temperature and humidity sensor DHT11
+- Camera (for facial recognition)
+- Microphone (for voice input)
+- LCD monitor + glass with window film (improvised two-way mirror)
+- Touch frame
 
 ### **Software**
 - `Python 3.11` (backend)
-- `OpenCV` (reconhecimento facial)
-- `SpeechRecognition` + `ChatGPT API` (comando de voz e assistente virtual)
-- `FastAPI` (servidor de backend)
+- `OpenCV` (facial recognition)
+- `SpeechRecognition` + `ChatGPT API` (voice command and virtual assistant)
+- `FastAPI` (backend server)
 - `HTML`, `CSS`, `JavaScript` (frontend/interface)
-- `SQLite` (banco de dados local leve)
-- APIs externas: NewsAPI, InfoMoney, BibliaOn, CNNBrasil
+- `SQLite` (lightweight local database)
+- External APIs: NewsAPI, InfoMoney, BibliaOn, CNNBrasil
 
 ---
 
-## Inteligência Artificial
+## Artificial Intelligence
 
-- A assistente virtual **Zoey** foi implementada usando a API da OpenAI (modelo GPT-4-o-mini).
-- Capaz de interagir com o usuário por voz, responder perguntas, fornecer notícias e até manter diálogos simples.
-- A personalidade e o comportamento da Zoey foram customizados para garantir uma experiência única no contexto do espelho inteligente.
-
----
-
-## Reconhecimento Facial
-
-- Implementado com `OpenCV` e o algoritmo **LBPH (Local Binary Patterns Histograms)**.
-- Cada usuário possui um perfil único, com widgets personalizados e autenticação baseada na similaridade facial (>60% de precisão).
-- O sistema armazena os dados faciais com segurança em banco local e carrega a interface apenas para usuários reconhecidos.
+- The virtual assistant **Zoey** was implemented using OpenAI's API (GPT-4-o-mini model).
+- Capable of interacting with users by voice, answering questions, providing news and even maintaining simple dialogues.
+- Zoey's personality and behavior were customized to ensure a unique experience in the smart mirror context.
 
 ---
 
-## Resultados e Conclusões
+## Facial Recognition
 
-- Sistema funcional com todas as funcionalidades planejadas implementadas com sucesso.
-- Reconhecimento facial robusto e seguro.
-- Interface intuitiva e responsiva.
-- Sensor de movimento altamente confiável.
-- A única limitação foi o espelho improvisado com insulfilm, que não alcançou o mesmo nível de reflexividade de um espelho bidirecional profissional.
+- Implemented with `OpenCV` and the **LBPH (Local Binary Patterns Histograms)** algorithm.
+- Each user has a unique profile, with personalized widgets and authentication based on facial similarity (>60% accuracy).
+- The system securely stores facial data in a local database and loads the interface only for recognized users.
 
 ---
 
-## Créditos
+## Results and Conclusions
 
-Desenvolvido por:
+- Functional system with all planned features successfully implemented.
+- Robust and secure facial recognition.
+- Intuitive and responsive interface.
+- Highly reliable motion sensor.
+- The only limitation was the improvised mirror with window film, which did not achieve the same level of reflectivity as a professional two-way mirror.
+
+---
+
+## Credits
+
+Developed by:
 - Mateus Silva
 - Lucas de Morais
 - William de Morais Chakur
 
-**Universidade Tecnológica Federal do Paraná – UTFPR**  
-Curso: Engenharia da Computação
+**Federal University of Technology - Paraná – UTFPR**  
+Course: Computer Engineering
 
 ---
 
-## Imagens do Projeto
+## Project Images
 
 
 <p align="center">
-  <img src="SmartMirrorDiagram.png" alt="Diagrama do Smart Mirror" height="300"/>
+  <img src="SmartMirrorDiagram.png" alt="Smart Mirror Diagram" height="300"/>
 </p>
-<p align="center"><em>Figura 1: Diagrama do Smart Mirror</em></p>
+<p align="center"><em>Figure 1: Smart Mirror Diagram</em></p>
 
 <p align="center">
-  <img src="SmartMirrorPic.jpg" alt="Foto do espelho inteligente em funcionamento" width="400"/>
+  <img src="SmartMirrorPic.jpg" alt="Photo of the smart mirror in operation" width="400"/>
 </p>
-<p align="center"><em>Figura 2: Espelho inteligente em funcionamento</em></p>
+<p align="center"><em>Figure 2: Smart mirror in operation</em></p>
 
 
 <p align="center">
-  <img src="Interface.png" alt="Printscreen da inferface weeb" width="400"/>
+  <img src="Interface.png" alt="Screenshot of the web interface" width="400"/>
 </p>
-<p align="center"><em>Figura 3: Interface do usuário</em></p>
+<p align="center"><em>Figure 3: User interface</em></p>
 
-## Vídeo do projeto
+## Project Video
 
-O vídeo do projeto em funcionamento pode ser acessado publicamente no [youtube](https://www.youtube.com/watch?v=5a-c2_L6kec) 
+The project demonstration video can be accessed publicly on [YouTube](https://www.youtube.com/watch?v=5a-c2_L6kec) 
 
 ---
 
-## Futuras Melhorias
+## Future Improvements
 
-- Substituir vidro com insulfilm por espelho bidirecional real.
-- Melhor acabamento físico da estrutura do espelho.
-- Interface via aplicativo mobile para configuração remota.
+- Replace window film glass with real two-way mirror.
+- Better physical finishing of the mirror structure.
+- Mobile application interface for remote configuration.
 
 ---
+
+## License
+
+For academic use in the **Integration Workshop 1 Course**
+
+
